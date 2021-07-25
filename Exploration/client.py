@@ -52,15 +52,16 @@ if __name__ == '__main__':
         # Waits for keyboard input
         to_send = input("Send Message: ")
 
-        # Sends message to server
-        send(client, to_send)
+        if to_send:
+            # Sends message to server
+            send(client, to_send)
 
-        # Ends connection if user types QUIT
-        if to_send == "QUIT":
-            break
+            # Ends connection if user types QUIT
+            if to_send == "QUIT":
+                break
 
-        # Waits for a message to be receieved
-        receive(client)
+            # Waits for a message to be receieved
+            receive(client)
 
     # Closes the connection
     client.close()
