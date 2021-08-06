@@ -44,6 +44,16 @@ def handle_client(connection, address):
                     to_get = data.split()[1]
                     response = "here is the data for " + to_get
 
+                # 7/25 Assignment: Add command to server (1/2) (raymond tian)
+                elif data.startswith("TWEET") and len(data.split()) > 1:
+                    to_tweet = " ".join(data.split()[1:])
+                    response = f"tweeting {to_tweet}"
+
+                # 7/25 Assignment: Add command to server (2/2) (raymond tian)
+                elif data.startswith("SEARCH") and len(data.split()) > 1:
+                    to_tweet = " ".join(data.split()[1:])
+                    response = f"searching {to_tweet}"
+
                 # If the message does not match any command
                 else:
                     response = "nothing"
