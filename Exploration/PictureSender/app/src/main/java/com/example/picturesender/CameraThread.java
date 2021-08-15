@@ -25,6 +25,8 @@ import java.util.List;
 
 public class CameraThread extends HandlerThread {
     private ImageReader mImageReader;
+    private byte[] mCurrentImage = new byte[640 * 480 * 3 / 2];
+    private Object mCurrentImageLock = new Object();
     private Context mContext;
     private Handler mThreadHandler;
     private CameraManager mCameraManager;
@@ -37,16 +39,42 @@ public class CameraThread extends HandlerThread {
             "android.permission.CAMERA"
     };
     //callback for image reader
-    ImageReader.OnImageAvailableListener mOnImageAvailableListener=new ImageReader.OnImageAvailableListener() {
+    ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader reader) {
             Image image = reader.acquireLatestImage();
-            if (image != null){
-                //Do something about the image
+            if (image != null) {
+                //Note: mCurrentImage will be accessed in both camera thread
+                // and main thread. Therefore, it should be protected by a mutex
+                synchronized (mCurrentImageLock) {
+                    //Copy Y component to mCurrentImage, beginning 640x480 bytes
+                    ByteBuffer Y = image.getPlanes()[0].getBuffer();
+                    Y.rewind();
+                    Y.get(mCurrentImage, 0, 640 * 480);
+                    //Copy VU components to mCurrentImage, right after Y component
+                    ByteBuffer VU = image.getPlanes()[2].getBuffer();
+                    VU.rewind();
+                    //Note: from plane2, we can only access total of 320*240*2-1 bytes.
+                    //The last byte of VU plane, which is a U component value is missing
+                    VU.get(mCurrentImage, 640 * 480, 320 * 240 * 2 - 1);
+                    //Try to fetch the last byte.
+                    ByteBuffer UV = image.getPlanes()[1].getBuffer();
+                    UV.rewind();
+                    //The last byte's index is 320*240*2-2. (Total length is 320*240*2-1
+                    mCurrentImage[640 * 480 * 3 / 2 - 1] = VU.get(320 * 240 * 2 - 2);
+                }
                 image.close();
             }
         }
     };
+
+    //This function will be called from main thread. Therefore,
+    //mCurrentImage should be protected by a mutex
+    public void copyOutCurrentImage(byte[] target) {
+        synchronized (mCurrentImageLock) {
+            System.arraycopy(mCurrentImage, 0, target, 0, 640 * 480 * 3 / 2);
+        }
+    }
 
     //Callbacks in camera open
     private CameraDevice.StateCallback mCameraOpenStateCallback = new CameraDevice.StateCallback() {

@@ -19,18 +19,21 @@ import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
     //button to be pressed
-    Button mButton0;
+    private Button mButton0;
     //For showing camera preview
-    SurfaceView mCameraView;
+    private SurfaceView mCameraView;
     //For setting up camera after a short delay
-    Handler mMainThreadHandler;
+    private Handler mMainThreadHandler;
     //Need 2nd thread to send things to server
-    HandlerThread mNetworkThread;
-    Handler mNetworkThreadHandler;
+    private HandlerThread mNetworkThread;
+    private Handler mNetworkThreadHandler;
     //Need 3rd thread to operate camera
-    CameraThread mCameraThread;
+    private CameraThread mCameraThread;
     //Context is needed for setting up camera thread
-    Context mContext;
+    private Context mContext;
+    //A buffer to store a raw YUV picture
+    //The content will be fetched from camera thread.
+    private byte[] mRawImage = new byte[640 * 480 * 3 / 2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,26 +42,42 @@ public class MainActivity extends AppCompatActivity {
         //Start network thread
         mNetworkThread = new HandlerThread("Network Thread");
         mNetworkThread.start();
+        //needed for assigning network related tasks
         mNetworkThreadHandler = new Handler(mNetworkThread.getLooper());
         //Prepare a main thread handler, needed for delayed camera thread setting up
         mContext = this;
+        //needed for setting up camera thread after a fraction of a second
         mMainThreadHandler = new Handler(getMainLooper());
         //Hook up with button and camera preview window in UI
         mButton0 = (Button) findViewById(R.id.button0);
+        //Camera preview
         mCameraView = (SurfaceView) findViewById(R.id.surfaceView);
         //Determine what to do if the button is clicked.
         mButton0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Ask network thread to send content in its thread, not in main thread
-                mNetworkThreadHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Pretend the following byte array includes a jpeg image.
-                        byte[] jpegImage = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-                        sendPic(jpegImage);
-                    }
-                });
+                if (mCameraThread != null) {
+
+                    //copies the latest image to buffer from camera thread
+                    mCameraThread.copyOutCurrentImage(mRawImage);
+                    //creates yuv image object from the buffer
+                    YuvImage yuvImage = new YuvImage(mRawImage, ImageFormat.NV21, 640, 480, null);
+                    //prepares a storage buffer for compressed jpeg bytes
+                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                    //jpeg compression
+                    yuvImage.compressToJpeg(new Rect(0, 0, 640, 480), 90, buffer);
+                    //acquires the compressed content in the form of byte array
+                    byte[] jpegData = buffer.toByteArray();
+
+                    //assign task to networkThread to send out jpeg file
+                    mNetworkThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendPic(jpegData);
+                        }
+                    });
+                }
             }
         });
 
@@ -74,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     //The function of sending content over the network
     //Note: This function is executed in network thread
     private void sendPic(final byte[] inbytes) {
-        String host = new String("192.168.2.139");
+        String host = new String("192.168.2.132");
         int port = 32421;
         //server address basically
         try {
@@ -89,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             socket = new Socket(host, port);
             outputStream = socket.getOutputStream();
             outputStream.write(inbytes);
+            socket.close();
         } catch (Exception e) {
             //In case something is wrong, such as no internet, etc.
             e.printStackTrace();
