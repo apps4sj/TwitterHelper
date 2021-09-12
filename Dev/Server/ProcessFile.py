@@ -1,6 +1,7 @@
 import json
 from HtmlGenerator import generateHTML
 from HtmlDeleter import deleteHTML
+from HtmlPreviewer import previewHTML
 
 def ProcessFile(fileName):
     ###### Open The file ##############
@@ -32,6 +33,9 @@ def ProcessFile(fileName):
     if type == "delete":
        deleteHTML(theJson, "/var/www/html")
        return "deleted"
+    if type == "preview":
+       imagePath = previewHTML(theJson, "/var/www/html")
+       return imagePath
     #Done with reading
     file.close()
     

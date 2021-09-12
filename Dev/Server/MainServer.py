@@ -1,9 +1,11 @@
 import socketserver
 import random
 import os
-from HtmlGenerator import generateHTML
+from pyvirtualdisplay import Display
 from ProcessFile import ProcessFile
 fileNameToSave = str("")
+display = Display()
+display.start()
 
 # Assuming the beginning 10 bytes are integer, which is the total byte count of
 # the message, including the beginning 10 bytes
@@ -46,8 +48,16 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             response = ProcessFile(fileName)
             if response == "deleted":
                 self.request.sendall(bytes(response + "\n", 'ascii'))
-            else:
-                self.request.sendall(bytes("http://34.102.29.133/" + response + "\n", 'ascii'))            
+            if response.endswith("index.html"):
+                self.request.sendall(bytes("http://apps4sj.org/" + response + "\n", 'ascii'))
+            if response.endswith(".jpg"):
+               imageFile = open(response,"br")
+               imageData = imageFile.read(256)
+               while len(imageData) > 0:
+                   self.request.send(imageData)
+                   imageData = imageFile.read(256)
+               imageFile.close()
+               os.remove(response)
         else:
             self.request.sendall(bytes("Not Fully Downloaded\n", 'ascii'))
         #Temp file should always be deleted
