@@ -58,6 +58,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                    imageData = imageFile.read(256)
                imageFile.close()
                os.remove(response)
+            if response == "extended":
+                self.request.sendall(bytes("extended",'ascii'))
+            if response == "cleaned":
+                self.request.sendall(bytes("cleaned",'ascii'))
         else:
             self.request.sendall(bytes("Not Fully Downloaded\n", 'ascii'))
         #Temp file should always be deleted

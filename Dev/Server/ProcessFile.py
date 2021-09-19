@@ -1,7 +1,12 @@
 import json
 from HtmlGenerator import generateHTML
 from HtmlDeleter import deleteHTML
+from HtmlDeleter import deleteHTMLById
 from HtmlPreviewer import previewHTML
+from AgingTable import updateAgeRecord
+from AgingTable import deleteAgeRecord
+from AgingTable import getExpiredIds
+import time
 
 def ProcessFile(fileName):
     ###### Open The file ##############
@@ -29,13 +34,33 @@ def ProcessFile(fileName):
     #### This is a create type of request #####
     if type == "create":
        generateHTML(file, theJson, "/var/www/html")
+       currentTime = int(time.time())
+       expiringTime = currentTime + 7*24*3600
+       updateAgeRecord(theJson.get("id"), expiringTime)
        return theJson.get("id") + "/index.html"
+    #### This is a delete type of request #####
     if type == "delete":
        deleteHTML(theJson, "/var/www/html")
+       deleteAgeRecord(theJson.get("id"))
        return "deleted"
+    #### This is a preview type of request #####
     if type == "preview":
        imagePath = previewHTML(theJson, "/var/www/html")
        return imagePath
+    #### This is a extend type of request #####
+    if type == "extend":
+       currentTime = int(time.time())
+       expiringTime = currentTime + 7*24*3600
+       updateAgeRecord(theJson.get("id"), expiringTime)
+       return "extended"
+    #### This is a clean type of request #####
+    if type == "clean":
+       currentTime = int(time.time())
+       ids = getExpiredIds(currentTime)
+       for id in ids:
+           deleteHTMLById(id, "var/www/html")
+           deleteAgeRecord(id)
+       return "cleaned"
     #Done with reading
     file.close()
     
