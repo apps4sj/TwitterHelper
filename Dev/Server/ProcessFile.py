@@ -6,6 +6,7 @@ from HtmlPreviewer import previewHTML
 from AgingTable import updateAgeRecord
 from AgingTable import deleteAgeRecord
 from AgingTable import getExpiredIds
+from HtmlPublisher import publishHTML   
 import time
 
 def ProcessFile(fileName):
@@ -31,26 +32,34 @@ def ProcessFile(fileName):
     ######Load json string to a Python Dic #####
     theJson = json.loads(jsonString)
     type = theJson.get("type")
-    #### This is a create type of request #####
-    if type == "create":
-       generateHTML(file, theJson, "/var/www/html")
+    #### This is a stage type of request #####
+    if type == "stage":
+       generateHTML(file, theJson, "/var/www/staged")
+       imagePath = previewHTML(theJson, "/var/www/staged")
        currentTime = int(time.time())
-       expiringTime = currentTime + 7*24*3600
+       expiringTime = currentTime + 3600
        updateAgeRecord(theJson.get("id"), expiringTime)
-       return theJson.get("id") + "/index.html"
+       return imagePath
+    #### This is a publish type of request #####
+    if type == "publish":
+       res = publishHTML(theJson, "/var/www/staged", "/var/www/html")
+       if res == True:
+           currentTime = int(time.time())
+           expiringTime = currentTime + 3600
+           updateAgeRecord(theJson.get("id"), expiringTime)
+           return theJson.get("id") + "/index.html"
+       else:
+           return "Error"
     #### This is a delete type of request #####
     if type == "delete":
        deleteHTML(theJson, "/var/www/html")
+       deleteHTML(theJson, "/var/www/staged")
        deleteAgeRecord(theJson.get("id"))
        return "deleted"
-    #### This is a preview type of request #####
-    if type == "preview":
-       imagePath = previewHTML(theJson, "/var/www/html")
-       return imagePath
     #### This is a extend type of request #####
     if type == "extend":
        currentTime = int(time.time())
-       expiringTime = currentTime + 7*24*3600
+       expiringTime = currentTime + 3600
        updateAgeRecord(theJson.get("id"), expiringTime)
        return "extended"
     #### This is a clean type of request #####
@@ -58,7 +67,8 @@ def ProcessFile(fileName):
        currentTime = int(time.time())
        ids = getExpiredIds(currentTime)
        for id in ids:
-           deleteHTMLById(id, "var/www/html")
+           deleteHTMLById(id, "/var/www/html")
+           deleteHTMLById(id, "/var/www/staged")
            deleteAgeRecord(id)
        return "cleaned"
     #Done with reading

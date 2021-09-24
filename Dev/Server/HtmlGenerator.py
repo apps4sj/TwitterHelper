@@ -1,9 +1,12 @@
 import os
+import os.path
 import shutil
 def generateHTML(theFile, theJson, htmlDir):
 #defining the function of generateHTML later used in main.py
     id = theJson.get("id")
     homeDir = htmlDir + "/" + id
+    if os.path.exists(homeDir):
+        shutil.rmtree(homeDir)
     os.mkdir(homeDir)
     #Create index.html
     htmlFile = open(homeDir +"/index.html", 'w')
