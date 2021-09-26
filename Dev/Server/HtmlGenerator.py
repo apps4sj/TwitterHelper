@@ -1,6 +1,7 @@
 import os
 import os.path
 import shutil
+import random
 def generateHTML(theFile, theJson, htmlDir):
 #defining the function of generateHTML later used in main.py
     id = theJson.get("id")
@@ -75,8 +76,10 @@ def generateHTML(theFile, theJson, htmlDir):
             imageCnt = 0
             htmlFile.write("<br/>")
     #Social Images
-    shutil.copy2("/var/www/images/wearmask0.jpeg", homeDir)
-    htmlFile.write("<img src=\"wearmask0.jpeg\" width = 200 height= 200>\n")
+    socialImageList = os.listdir("/var/www/images")
+    socialImage = random.choice(socialImageList)
+    shutil.copy2("/var/www/images/" + socialImage, homeDir)
+    htmlFile.write("<img src=\"" + socialImage + "\" width = 200 height= 200>\n")
     htmlFile.write("<br/>\n")
     #closing Html
     htmlFile.write("</body>\n")
