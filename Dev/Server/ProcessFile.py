@@ -1,3 +1,4 @@
+import mysql.connector
 import json
 from HtmlGenerator import generateHTML
 from HtmlDeleter import deleteHTML
@@ -12,6 +13,11 @@ import time
 def ProcessFile(fileName):
     ###### Open The file ##############
     #### Read Json to a string ########
+    print("I am here 0")
+    cnx = mysql.connector.connect(user='root', password='apps4siapps4sj',host='localhost',database='TwitterHelperDatabase')
+    print("I am here 1")
+    cur = cnx.cursor()
+    print("I am here 2")
     file = open(fileName, "br")
     jsonString = ""
     theChar = str(file.read(1), 'utf-8')
@@ -38,7 +44,9 @@ def ProcessFile(fileName):
        imagePath = previewHTML(theJson, "/var/www/staged")
        currentTime = int(time.time())
        expiringTime = currentTime + 3600
-       updateAgeRecord(theJson.get("id"), expiringTime)
+       updateAgeRecord(cur, theJson.get("id"), expiringTime)
+       cnx.close()
+       file.close()
        return imagePath
     #### This is a publish type of request #####
     if type == "publish":
@@ -46,32 +54,40 @@ def ProcessFile(fileName):
        if res == True:
            currentTime = int(time.time())
            expiringTime = currentTime + 3600
-           updateAgeRecord(theJson.get("id"), expiringTime)
+           updateAgeRecord(cur, theJson.get("id"), expiringTime)
+           cnx.close()
+           file.close()
            return theJson.get("id") + "/index.html"
        else:
+           cnx.close()
+           file.close()
            return "Error"
     #### This is a delete type of request #####
     if type == "delete":
        deleteHTML(theJson, "/var/www/html")
        deleteHTML(theJson, "/var/www/staged")
-       deleteAgeRecord(theJson.get("id"))
+       deleteAgeRecord(cur, theJson.get("id"))
+       cnx.close()
+       file.close()
        return "deleted"
     #### This is a extend type of request #####
     if type == "extend":
        currentTime = int(time.time())
        expiringTime = currentTime + 3600
-       updateAgeRecord(theJson.get("id"), expiringTime)
+       updateAgeRecord(cur, theJson.get("id"), expiringTime)
+       cnx.close()
+       file.close()
        return "extended"
     #### This is a clean type of request #####
     if type == "clean":
        currentTime = int(time.time())
-       ids = getExpiredIds(currentTime)
+       ids = getExpiredIds(cur, currentTime)
        for id in ids:
            deleteHTMLById(id, "/var/www/html")
            deleteHTMLById(id, "/var/www/staged")
-           deleteAgeRecord(id)
+           deleteAgeRecord(cur, id)
+       cnx.close()
+       file.close()
        return "cleaned"
-    #Done with reading
-    file.close()
     
 #ProcessFile("./deleteJson.bin")

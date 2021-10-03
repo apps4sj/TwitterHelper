@@ -1,50 +1,38 @@
 import json
 import os.path
 from filelock import FileLock
+import mysql.connector
 
-def updateAgeRecord(id, expiringEpochTimeInSec):
-    lock = FileLock("agingtable.json.lock")
-    with lock:
-        if os.path.exists("agingtable.json"):
-            jsonFile=open("agingtable.json", "r")
-            theJson = json.load(jsonFile)
-            jsonFile.close()
-            theJson.update({id:expiringEpochTimeInSec})
-            jsonFile = open("agingtable.json", "w")
-            json.dump(theJson, jsonFile)
-            jsonFile.close
-            
-        else:
-            theJson = {id:expiringEpochTimeInSec}
-            jsonFile = open("agingtable.json", "w")
-            json.dump(theJson, jsonFile)
-            jsonFile.close
+def updateAgeRecord(cur, id, expiringEpochTimeInSec):
+    sqlCommand= "SELECT * FROM AdAges WHERE id = " + id
+    print(sqlCommand)
+    cur.execute(sqlCommand )
+    if len(cur.fetchall()) > 0:
+        #The record is already there. Update it
+        sqlCommand = "UPDATE AdAges SET age = " + str(expiringEpochTimeInSec)+ " WHERE id = " + id
+        print(sqlCommand)
+        cur.execute(sqlCommand)
+    else:
+        #The record is not there, insert one
+        sqlCommand ="INSERT INTO AdAges VALUES(" + id + ", " + str(expiringEpochTimeInSec)+")"
+        print(sqlCommand)
+        cur.execute(sqlCommand)
 
-def deleteAgeRecord(id):
-    lock = FileLock("agingtable.json.lock")
-    with lock:
-        if os.path.exists("agingtable.json"):
-            jsonFile=open("agingtable.json", "r")
-            theJson = json.load(jsonFile)
-            jsonFile.close()
-            if id in theJson:
-                del theJson[id]
-                jsonFile = open("agingtable.json", "w")
-                json.dump(theJson, jsonFile)
-                jsonFile.close
+def deleteAgeRecord(cur, id):
+    sqlCommand = "DELETE FROM AdAges WHERE id = " + id
+    print(sqlCommand)
+    cur.execute(sqlCommand)
 
-def getExpiredIds(threshold):
-    lock = FileLock("agingtable.json.lock")
-    res = []
-    with lock:
-        if os.path.exists("agingtable.json"):
-            jsonFile=open("agingtable.json", "r")
-            theJson = json.load(jsonFile)
-            jsonFile.close()
-            for key in theJson:
-                value = theJson.get(key)
-                if value < threshold:
-                    res.append(key)
-    return res
+
+def getExpiredIds(cur, threshold):
+    sqlCommand = "SELECT id FROM AdAges WHERE age < " + str(threshold)
+    print(sqlCommand)
+    cur.execute(sqlCommand)
+    res = cur.fetchall()
+    idList=[]
+    for record in res:
+        idList.append(record[0])
+    print(idList)
+    return idList
 
 

@@ -1,3 +1,4 @@
+import mysql.connector
 import socketserver
 import random
 import os
@@ -51,6 +52,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             if response.endswith("index.html"):
                 self.request.sendall(bytes("http://apps4sj.org/" + response + "\n", 'ascii'))
             if response.endswith(".jpg"):
+               #send image file length in 10bytes
+               imageLength=os.path.getsize(response) + 10
+               lengthString = format(imageLength, '010d')
+               print(lengthString)
+               self.request.sendall(bytes(lengthString,'ascii'))
+               #send image file itself
                imageFile = open(response,"br")
                imageData = imageFile.read(256)
                while len(imageData) > 0:
