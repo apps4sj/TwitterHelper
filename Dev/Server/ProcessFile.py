@@ -7,17 +7,15 @@ from HtmlPreviewer import previewHTML
 from AgingTable import updateAgeRecord
 from AgingTable import deleteAgeRecord
 from AgingTable import getExpiredIds
-from HtmlPublisher import publishHTML   
+from HtmlPublisher import publishHTML
+from HtmlTweetHandler import sendTweet
 import time
 
 def ProcessFile(fileName):
     ###### Open The file ##############
     #### Read Json to a string ########
-    print("I am here 0")
-    cnx = mysql.connector.connect(user='root', password='apps4siapps4sj',host='localhost',database='TwitterHelperDatabase')
-    print("I am here 1")
+    cnx = mysql.connector.connect(user='root', password='xx',host='localhost',database='TwitterHelperDatabase')
     cur = cnx.cursor()
-    print("I am here 2")
     file = open(fileName, "br")
     jsonString = ""
     theChar = str(file.read(1), 'utf-8')
@@ -57,6 +55,9 @@ def ProcessFile(fileName):
            updateAgeRecord(cur, theJson.get("id"), expiringTime)
            cnx.close()
            file.close()
+           webpagePath = "/var/www/html" + "/" + theJson.get("id")
+           url = "https://apps4sj.org" + "/" + theJson.get("id")
+           sendTweet(webpagePath, url)
            return theJson.get("id") + "/index.html"
        else:
            cnx.close()
@@ -90,4 +91,3 @@ def ProcessFile(fileName):
        file.close()
        return "cleaned"
     
-#ProcessFile("./deleteJson.bin")

@@ -78,6 +78,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 HOST = "0.0.0.0"
 PORT = 32421
-myServer = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
+myServer = socketserver.ForkingTCPServer((HOST, PORT), MyTCPHandler)
 myServer.serve_forever()
 

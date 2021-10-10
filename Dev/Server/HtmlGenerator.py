@@ -11,15 +11,24 @@ def generateHTML(theFile, theJson, htmlDir):
     os.mkdir(homeDir)
     #Create index.html
     htmlFile = open(homeDir +"/index.html", 'w')
-    htmlFile.write("\n")
+    htmlFile.write("<!DOCTYPE html>\n")
     htmlFile.write("<html>\n")
+    htmlFile.write("<head>\n")
+    htmlFile.write("<meta charset=\"utf-8\">\n")
+    htmlFile.write("<meta name=\"viewport\" content=\"width=device-width\">\n")
+    htmlFile.write("<title>repl.it</title>\n")
+    htmlFile.write("<link href=\"style.css\" rel=\"stylesheet\" type=\"text/css\" />\n")
+    htmlFile.write("</head>\n")
+
     htmlFile.write("<body>\n")
+    htmlFile.write("<script src=\"script.js\"></script>\n")
+    htmlFile.write("<div class=\"txt\">\n")
     #Title
     price = theJson.get("price")
     if price == 0:
         htmlFile.write("<h1>" + theJson.get("itemName") +  " for free </h1>\n")
     else:
-        htmlFile.write("<h1>" + theJson.get("itemName") +  "for " + str(price) +" </h1>\n")
+        htmlFile.write("<h1>" + theJson.get("itemName") +  " for $" + str(price) +" </h1>\n")
     #htmlFile.write("<br/>\n")
 
     #Despcription
@@ -51,8 +60,9 @@ def generateHTML(theFile, theJson, htmlDir):
     htmlFile.write(theJson.get("contact"))
     htmlFile.write("</p>")
     htmlFile.write("<br/>\n")
-
-    #Images
+    htmlFile.write("</div>\n")
+    #Image
+    #htmlFile.write("<div class=\"imgs\">\n")
     imageCnt = 0
     for imageFile in ["image0", "image1", "image2",  "image3", "image4", "image5"]:
         curImageFile = theJson.get(imageFile)
@@ -81,8 +91,11 @@ def generateHTML(theFile, theJson, htmlDir):
     shutil.copy2("/var/www/images/" + socialImage, homeDir)
     htmlFile.write("<img src=\"" + socialImage + "\" width = 200 height= 200>\n")
     htmlFile.write("<br/>\n")
+    #htmlFile.write("</div>\n")
     #closing Html
     htmlFile.write("</body>\n")
     htmlFile.write("</html>\n")
     htmlFile.close()
+    shutil.copy2("style.css", homeDir)
+    shutil.copy2("script.js", homeDir)
 
