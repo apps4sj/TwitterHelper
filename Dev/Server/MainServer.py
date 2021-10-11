@@ -2,6 +2,7 @@ import mysql.connector
 import socketserver
 import random
 import os
+import time
 from pyvirtualdisplay import Display
 from ProcessFile import ProcessFile
 fileNameToSave = str("")
@@ -59,11 +60,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                self.request.sendall(bytes(lengthString,'ascii'))
                #send image file itself
                imageFile = open(response,"br")
-               imageData = imageFile.read(256)
-               while len(imageData) > 0:
-                   self.request.send(imageData)
-                   imageData = imageFile.read(256)
+               imageData = imageFile.read()
                imageFile.close()
+               self.request.sendall(imageData)
+               time.sleep(.4)
                os.remove(response)
             if response == "extended":
                 self.request.sendall(bytes("extended",'ascii'))
