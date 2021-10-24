@@ -48,5 +48,22 @@ def sendTweet(webPagePath, url):
    # Post tweet with image
    tweet = "**" + title + "**" + url
    post_result = api.update_status(status=tweet, media_ids=mediaIds)
-   #tweets image with text "test2"
+   return str(post_result.id)
+
+def deleteTweet(tweetId):
+   #Tweeting
+   consumer_key = 'xx'
+   consumer_secret_key = 'xx'
+   access_token = 'xx'
+   access_token_secret = 'xx'
+
+   auth = tweepy.OAuthHandler(consumer_key, consumer_secret_key)
+   auth.set_access_token(access_token, access_token_secret)
+   api = tweepy.API(auth)
+
+   # Post tweet with image
+   tweetId = int(tweetId)
+   status = api.get_status(tweetId)
+   if status:
+       api.destroy_status(tweetId)
 
