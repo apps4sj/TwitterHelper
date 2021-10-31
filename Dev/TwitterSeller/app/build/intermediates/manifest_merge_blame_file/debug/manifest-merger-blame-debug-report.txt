@@ -1,0 +1,125 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.apps4si.TwitterSeller"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="16"
+8-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="30" />
+9-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml
+10
+11    <uses-feature
+11-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:5:5-7:35
+12        android:name="android.hardware.camera"
+12-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:6:9-47
+13        android:required="true" />
+13-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:7:9-32
+14
+15    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+15-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:9:5-80
+15-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:9:22-77
+16    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+16-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:10:5-81
+16-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:10:22-78
+17    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+17-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:11:5-76
+17-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:11:22-73
+18    <uses-permission android:name="android.permission.INTERNET" />
+18-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:12:5-67
+18-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:12:22-64
+19    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+19-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:13:5-81
+19-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:13:22-78
+20
+21    <application
+21-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:15:5-50:19
+22        android:allowBackup="true"
+22-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:16:9-35
+23        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+23-->[androidx.core:core:1.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\ec322e19e59be0ee44ce6650da9ba191\core-1.5.0\AndroidManifest.xml:24:18-86
+24        android:debuggable="true"
+25        android:icon="@mipmap/ic_launcher"
+25-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:17:9-43
+26        android:label="@string/app_name"
+26-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:18:9-41
+27        android:roundIcon="@mipmap/ic_launcher_round"
+27-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:19:9-54
+28        android:supportsRtl="true"
+28-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:20:9-35
+29        android:testOnly="true"
+30        android:theme="@style/Theme.CameraInput" >
+30-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:21:9-49
+31        <activity android:name="com.apps4si.TwitterSeller.FinalActivity" />
+31-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:22:9-85
+31-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:22:19-73
+32        <activity android:name="com.apps4si.TwitterSeller.PreviewActivity" />
+32-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:23:9-78
+32-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:23:19-75
+33
+34        <meta-data
+34-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:25:9-27:48
+35            android:name="com.google.android.actions"
+35-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:26:13-54
+36            android:resource="@xml/filepath" />
+36-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:27:13-45
+37
+38        <activity android:name="com.apps4si.TwitterSeller.MainActivity" >
+38-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:29:9-35:20
+38-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:29:19-72
+39            <intent-filter>
+39-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:30:13-34:29
+40                <action android:name="android.intent.action.MAIN" />
+40-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:31:17-69
+40-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:31:25-66
+41
+42                <category android:name="android.intent.category.LAUNCHER" />
+42-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:33:17-77
+42-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:33:27-74
+43            </intent-filter>
+44        </activity>
+45
+46        <provider
+46-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:37:9-45:20
+47            android:name="androidx.core.content.FileProvider"
+47-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:38:13-62
+48            android:authorities="com.apps4si.TwitterSeller"
+48-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:39:13-60
+49            android:exported="false"
+49-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:40:13-37
+50            android:grantUriPermissions="true" >
+50-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:41:13-47
+51            <meta-data
+51-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:42:13-44:52
+52                android:name="android.support.FILE_PROVIDER_PATHS"
+52-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:43:17-67
+53                android:resource="@xml/filepath" />
+53-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:44:17-49
+54        </provider>
+55
+56        <service
+56-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:47:9-49:56
+57            android:name="com.apps4si.TwitterSeller.MainActivity"
+57-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:48:13-66
+58            android:foregroundServiceType="location" />
+58-->C:\Users\andre\AndroidStudioProjects\TwitterSeller\app\src\main\AndroidManifest.xml:49:13-53
+59
+60        <activity
+60-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\39cb68e7191d4a89a2f9dcb45df0c6a3\jetified-play-services-base-17.5.0\AndroidManifest.xml:23:9-26:75
+61            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+61-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\39cb68e7191d4a89a2f9dcb45df0c6a3\jetified-play-services-base-17.5.0\AndroidManifest.xml:24:13-79
+62            android:exported="false"
+62-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\39cb68e7191d4a89a2f9dcb45df0c6a3\jetified-play-services-base-17.5.0\AndroidManifest.xml:25:13-37
+63            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+63-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\39cb68e7191d4a89a2f9dcb45df0c6a3\jetified-play-services-base-17.5.0\AndroidManifest.xml:26:13-72
+64
+65        <meta-data
+65-->[com.google.android.gms:play-services-basement:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\4a39a7b18b98371cdc6b940cd7aa11d0\jetified-play-services-basement-17.5.0\AndroidManifest.xml:23:9-25:69
+66            android:name="com.google.android.gms.version"
+66-->[com.google.android.gms:play-services-basement:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\4a39a7b18b98371cdc6b940cd7aa11d0\jetified-play-services-basement-17.5.0\AndroidManifest.xml:24:13-58
+67            android:value="@integer/google_play_services_version" />
+67-->[com.google.android.gms:play-services-basement:17.5.0] C:\Users\andre\.gradle\caches\transforms-2\files-2.1\4a39a7b18b98371cdc6b940cd7aa11d0\jetified-play-services-basement-17.5.0\AndroidManifest.xml:25:13-66
+68    </application>
+69
+70</manifest>
