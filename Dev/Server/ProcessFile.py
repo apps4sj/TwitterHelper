@@ -9,6 +9,11 @@ from AgingTable import deleteAgeRecord
 from AgingTable import getExpiredIds
 from HtmlPublisher import publishHTML
 from HtmlTweetHandler import sendTweet
+from HtmlTweetHandler import deleteTweet
+from TweetTable import updateTweetRecord
+from TweetTable import deleteTweetRecord
+from TweetTable import findTweetId
+
 import time
 
 def ProcessFile(fileName):
@@ -50,14 +55,16 @@ def ProcessFile(fileName):
     if type == "publish":
        res = publishHTML(theJson, "/var/www/staged", "/var/www/html")
        if res == True:
+           id = theJson.get("id")
            currentTime = int(time.time())
            expiringTime = currentTime + 3600
            updateAgeRecord(cur, theJson.get("id"), expiringTime)
+           webpagePath = "/var/www/html" + "/" + id
+           url = "https://apps4sj.org" + "/" + id
+           tweetId = sendTweet(webpagePath, url)
+           updateTweetRecord(cur, id, tweetId)
            cnx.close()
            file.close()
-           webpagePath = "/var/www/html" + "/" + theJson.get("id")
-           url = "https://apps4sj.org" + "/" + theJson.get("id")
-           sendTweet(webpagePath, url)
            return theJson.get("id") + "/index.html"
        else:
            cnx.close()
@@ -65,9 +72,14 @@ def ProcessFile(fileName):
            return "Error"
     #### This is a delete type of request #####
     if type == "delete":
+       id = theJson.get("id")
        deleteHTML(theJson, "/var/www/html")
        deleteHTML(theJson, "/var/www/staged")
-       deleteAgeRecord(cur, theJson.get("id"))
+       deleteAgeRecord(cur, id)
+       tweetIds = findTweetId(cur, id)
+       for tweetId in tweetIds:
+           deleteTweet(tweetId)
+           deleteTweetRecord(cur, tweetId)
        cnx.close()
        file.close()
        return "deleted"
@@ -87,6 +99,10 @@ def ProcessFile(fileName):
            deleteHTMLById(id, "/var/www/html")
            deleteHTMLById(id, "/var/www/staged")
            deleteAgeRecord(cur, id)
+           tweetIds = findTweetId(cur,id)
+           for tweetId in tweetIds:
+               deleteTweet(tweetId)
+               deleteTweetRecord(cur, tweetId)
        cnx.close()
        file.close()
        return "cleaned"
