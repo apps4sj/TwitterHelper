@@ -5,16 +5,15 @@ import os
 import time
 from pyvirtualdisplay import Display
 from ProcessFile import ProcessFile
-fileNameToSave = str("")
 display = Display()
 display.start()
 
 # Assuming the beginning 10 bytes are integer, which is the total byte count of
 # the message, including the beginning 10 bytes
 class MyTCPHandler(socketserver.BaseRequestHandler):
-    bytesToReceive = 0
 
     def handle(self):
+        random.seed(round(time.time() * 1000000))
         bytesToReceive = 0;
         rdata = self.request.recv(10)
         bytesToReceive = int(rdata.strip()) - 10
@@ -40,7 +39,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 fullyDownloaded = False;
                 break
             else:
-                print("received ", len(rdata), "bytes\n")
+                #print("received ", len(rdata), "bytes\n")
                 # Deduct number of bytes to receive by the number of
                 # newly received data
                 bytesToReceive -= len(rdata)
