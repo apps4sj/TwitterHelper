@@ -1,4 +1,4 @@
-package com.apps4si.TwitterSeller;
+package com.apps4sj.TwitterSeller;
 
 import org.junit.Test;
 
