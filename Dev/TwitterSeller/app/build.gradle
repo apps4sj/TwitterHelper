@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.apps4si.TwitterSeller"
+        applicationId "com.apps4sj.TwitterSeller"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1

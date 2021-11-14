@@ -1,4 +1,4 @@
-package com.apps4si.TwitterSeller;
+package com.apps4sj.TwitterSeller;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +11,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final String PREVIEW_IMAGE_BYTES = "com.example.camerainput.PREVIEWBYTEARRAY";
     public static final String LISTING_ID = "com.example.camerainput.LISTINGID";
+    public static final String SAVE_INSTANCE = "com.example.camerainput.SAVE_INSTANCE";
 
     public static final String HOST = "apps4sj.org";
     public static final int PORT = 32421;
@@ -82,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
         locationInput = findViewById(R.id.locationEditText);
         imageViewPreviews = new ImageView[]{findViewById(R.id.imageViewPreview1), findViewById(R.id.imageViewPreview2), findViewById(R.id.imageViewPreview3)};
 
+        Intent intent = getIntent();
+
+        String jsonSave = intent.getStringExtra(MainActivity.SAVE_INSTANCE);
+        if (jsonSave != null && !jsonSave.equals("")) {
+           setSaveInstance(jsonSave);
+        }
+
+
         pictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             photoFile = createImageFile();
                         } catch (IOException ex) {
-                            // Error occurred while creating the File
+                            ex.printStackTrace();
                         }
                         // Continue only if the File was successfully created
                         if (photoFile != null) {
                             Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
-                                    "com.apps4si.TwitterSeller",
+                                    "com.apps4sj.TwitterSeller",
                                     photoFile);
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -226,23 +237,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (bytesRead > 0)
                                     currentTotal += bytesRead;
                             } while (bytesRead > 0);
-//                            System.out.println("Total bytes read: " + currentTotal);
-
-//                            int length = filesize;
-//                            int total = 0;
-//                            while (length > 0) {
-//                                int offset = image.length - length;
-//                                int readLength = inputStream.read(image, offset, length);
-//                                total += readLength;
-//                                if (readLength == -1) {
-//                                    length = 0;
-//                                } else {
-//                                    length -= readLength;
-//                                }
-//                            }
-//                            System.out.println("Total bytes read: " + total);
-
-//                            System.out.println("Encoded!");
 
                             socket.close();
 
@@ -252,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                                     Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
                                     intent.putExtra(PREVIEW_IMAGE_BYTES, image);
                                     intent.putExtra(LISTING_ID, id);
+                                    intent.putExtra(SAVE_INSTANCE, getSaveInstance());
                                     startActivity(intent);
                                 }
                             });
@@ -267,13 +262,98 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private String getSaveInstance() {
+        try {
+            JSONObject saveInstance = new JSONObject();
+            saveInstance.put("itemName", productInput.getText());
+            saveInstance.put("price", String.valueOf(priceInput.getText()));
+            saveInstance.put("description", descInput.getText());
+            saveInstance.put("location", locationInput.getText());
+            saveInstance.put("contact", emailInput.getText());
+            if (!currentPhotoPaths[0].equals("")) {
+                saveInstance.put("image0", currentPhotoPaths[0]);
+            }
+            if (!currentPhotoPaths[1].equals("")) {
+                saveInstance.put("image1", currentPhotoPaths[1]);
+            }
+            if (!currentPhotoPaths[2].equals("")) {
+                saveInstance.put("image2", currentPhotoPaths[2]);
+            }
+            return saveInstance.toString();
+        } catch (Exception e){
+            return "";
+        }
+    }
+
+    private void setSaveInstance (String savedInstance) {
+        try {
+            JSONObject json = new JSONObject(savedInstance);
+            productInput.setText(json.get("itemName").toString());
+            priceInput.setText(json.get("price").toString());
+            descInput.setText(json.get("description").toString());
+            locationInput.setText(json.get("location").toString());
+            emailInput.setText(json.get("contact").toString());
+            if (!json.isNull("image0")) {
+                Bitmap imageBitmap = rotateBitmap(json.get("image0").toString());
+                imageViewPreviews[0].setImageBitmap(imageBitmap);
+                currentPhotoPaths[0] = json.get("image0").toString();
+                currentPhotoNum = 1;
+            }
+            if (!json.isNull("image1")) {
+                Bitmap imageBitmap = rotateBitmap(json.get("image1").toString());
+                imageViewPreviews[1].setImageBitmap(imageBitmap);
+                currentPhotoPaths[1] = json.get("image1").toString();
+                currentPhotoNum = 2;
+            }
+            if (!json.isNull("image2")) {
+                Bitmap imageBitmap = rotateBitmap(json.get("image2").toString());
+                imageViewPreviews[2].setImageBitmap(imageBitmap);
+                currentPhotoPaths[2] = json.get("image2").toString();
+                currentPhotoNum = 3;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && !currentPhotoPaths[currentPhotoNum - 1].equals("")) {
-            Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPaths[currentPhotoNum - 1]);
-            imageViewPreviews[currentPhotoNum - 1].setImageBitmap(imageBitmap);
+            try {
+                Bitmap imageBitmap = rotateBitmap(currentPhotoPaths[currentPhotoNum - 1]);
+                imageViewPreviews[currentPhotoNum - 1].setImageBitmap(imageBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private Bitmap rotateBitmap(String photoPath) throws IOException {
+        ExifInterface ei = new ExifInterface(photoPath);
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_UNDEFINED);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
+
+        switch(orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(bitmap, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(bitmap, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(bitmap, 270);
+            case ExifInterface.ORIENTATION_NORMAL:
+            default:
+                return bitmap;
+        }
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 
 
