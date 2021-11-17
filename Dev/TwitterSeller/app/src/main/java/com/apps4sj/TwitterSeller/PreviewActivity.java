@@ -65,7 +65,7 @@ public class PreviewActivity extends AppCompatActivity {
 
                             int headerNum = 46; //toSend.toString().getBytes().length;
                             StringBuilder header = new StringBuilder(String.valueOf(headerNum));
-                            while (header.length() < 9) {
+                            while (header.length() < 10) {
                                 header.insert(0, "0");
                             }
                             System.out.println(header);
