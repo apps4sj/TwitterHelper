@@ -1,4 +1,4 @@
-package com.apps4si.TwitterSeller;
+package com.apps4sj.TwitterSeller;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +26,8 @@ public class PreviewActivity extends AppCompatActivity {
     private String id;
     private Socket socket;
 
+    private String saveInstance;
+
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class PreviewActivity extends AppCompatActivity {
         previewImage.setImageBitmap(preview);
 
         id = intent.getStringExtra(MainActivity.LISTING_ID);
+        saveInstance = intent.getStringExtra(MainActivity.SAVE_INSTANCE);
 
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +65,7 @@ public class PreviewActivity extends AppCompatActivity {
 
                             int headerNum = 46; //toSend.toString().getBytes().length;
                             StringBuilder header = new StringBuilder(String.valueOf(headerNum));
-                            while (header.length() < 9) {
+                            while (header.length() < 10) {
                                 header.insert(0, "0");
                             }
                             System.out.println(header);
@@ -100,6 +103,7 @@ public class PreviewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PreviewActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.SAVE_INSTANCE, saveInstance);
                 startActivity(intent);
             }
         });

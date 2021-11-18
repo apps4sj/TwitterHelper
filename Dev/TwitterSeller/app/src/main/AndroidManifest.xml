@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.apps4si.TwitterSeller">
+    package="com.apps4sj.TwitterSeller">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -19,14 +19,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CameraInput">
-        <activity android:name="com.apps4si.TwitterSeller.FinalActivity"></activity>
-        <activity android:name="com.apps4si.TwitterSeller.PreviewActivity" />
+        <activity android:name="com.apps4sj.TwitterSeller.FinalActivity"></activity>
+        <activity android:name="com.apps4sj.TwitterSeller.PreviewActivity" />
 
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/filepath" />
 
-        <activity android:name="com.apps4si.TwitterSeller.MainActivity">
+        <activity android:name="com.apps4sj.TwitterSeller.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +36,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.apps4si.TwitterSeller"
+            android:authorities="com.apps4sj.TwitterSeller"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -45,7 +45,7 @@
         </provider>
 
         <service
-            android:name="com.apps4si.TwitterSeller.MainActivity"
+            android:name="com.apps4sj.TwitterSeller.MainActivity"
             android:foregroundServiceType="location" />
     </application>
 
