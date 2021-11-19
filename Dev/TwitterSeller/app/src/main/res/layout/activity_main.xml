@@ -138,19 +138,21 @@
 
         <ImageView
             android:id="@+id/imageViewPreview1"
-            android:layout_width="150dp"
+            android:layout_width="126dp"
             android:layout_height="150dp"
             android:layout_marginTop="4dp"
             android:layout_weight="0"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            tools:srcCompat="@drawable/take_a_picture" />
 
         <ImageView
             android:id="@+id/imageViewPreview2"
-            android:layout_width="150dp"
+            android:layout_width="140dp"
             android:layout_height="150dp"
             android:layout_marginTop="4dp"
             android:layout_weight="0"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            tools:srcCompat="@drawable/take_a_picture" />
 
         <ImageView
             android:id="@+id/imageViewPreview3"
@@ -158,20 +160,9 @@
             android:layout_height="150dp"
             android:layout_marginTop="4dp"
             android:layout_weight="0"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            tools:srcCompat="@drawable/take_a_picture" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/buttonPicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Take a Picture"
-        app:backgroundTint="#494949"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <Button
         android:id="@+id/sendButton"
@@ -181,8 +172,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonPicture"
-        app:layout_constraintVertical_bias="0.931" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

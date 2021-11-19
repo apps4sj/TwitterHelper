@@ -6,12 +6,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.R.drawable;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] currentPhotoPaths = {"", "", ""};
     private int currentPhotoNum = 0;
 
-    private Button pictureButton;
+    //private Button pictureButton;
     private Button sendButton;
     private EditText productInput, descInput, priceInput, emailInput, locationInput;
     private ImageView[] imageViewPreviews;
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        pictureButton = findViewById(R.id.buttonPicture);
+        //pictureButton = findViewById(R.id.buttonPicture);
         sendButton = findViewById(R.id.sendButton);
         productInput = findViewById(R.id.productEditText);
         descInput = findViewById(R.id.editTextDescription);
@@ -91,36 +94,51 @@ public class MainActivity extends AppCompatActivity {
         if (jsonSave != null && !jsonSave.equals("")) {
            setSaveInstance(jsonSave);
         }
+        Resources res = getResources();
+        Drawable drawable = res.getDrawable(R.drawable.take_a_picture);
 
+        for (ImageView  imageView : imageViewPreviews ) {
+            imageView.setImageDrawable(drawable);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(v == imageViewPreviews[0]) {
+                        currentPhotoNum = 0;
+                    }
+                    if(v == imageViewPreviews[1]) {
+                        currentPhotoNum = 1;
+                    }
+                    if(v == imageViewPreviews[2]) {
+                        currentPhotoNum = 2;
+                    }
 
-        pictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentPhotoNum == 3) {
-                    Toast.makeText(MainActivity.this, "You have reached the maximum number of pictures", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    // Ensure that there's a camera activity to handle the intent
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        // Create the File where the photo should go
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        // Continue only if the File was successfully created
-                        if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
-                                    "com.apps4sj.TwitterSeller",
-                                    photoFile);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    if (currentPhotoNum == 3) {
+                        Toast.makeText(MainActivity.this, "You have reached the maximum number of pictures", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                        // Ensure that there's a camera activity to handle the intent
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            // Create the File where the photo should go
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            // Continue only if the File was successfully created
+                            if (photoFile != null) {
+                                Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
+                                        "com.apps4sj.TwitterSeller",
+                                        photoFile);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,19 +159,19 @@ public class MainActivity extends AppCompatActivity {
                             byte[] binaryImage3 = {};
                             if (!currentPhotoPaths[0].equals("")) {
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPaths[0]);
+                                Bitmap imageBitmap = rotateBitmap(currentPhotoPaths[0]);
                                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
                                 binaryImage1 = stream.toByteArray();
                             }
                             if (!currentPhotoPaths[1].equals("")) {
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPaths[1]);
+                                Bitmap imageBitmap = rotateBitmap(currentPhotoPaths[1]);
                                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
                                 binaryImage2 = stream.toByteArray();
                             }
                             if (!currentPhotoPaths[2].equals("")) {
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPaths[2]);
+                                Bitmap imageBitmap = rotateBitmap(currentPhotoPaths[2]);
                                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
                                 binaryImage3 = stream.toByteArray();
                             }
