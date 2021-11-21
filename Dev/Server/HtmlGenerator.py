@@ -80,7 +80,7 @@ def generateHTML(theFile, theJson, htmlDir):
             imageFile.close()
             htmlFile.write("<img src=\"")
             htmlFile.write(fileName)
-            htmlFile.write("\" width = 200 height= 200>\n")
+            htmlFile.write("\" width = 240>\n")
         #For every 2 images, add a new line
         if imageCnt == 2:
             imageCnt = 0
@@ -89,7 +89,7 @@ def generateHTML(theFile, theJson, htmlDir):
     socialImageList = os.listdir("/var/www/images")
     socialImage = random.choice(socialImageList)
     shutil.copy2("/var/www/images/" + socialImage, homeDir)
-    htmlFile.write("<img src=\"" + socialImage + "\" width = 200 height= 200>\n")
+    htmlFile.write("<img src=\"" + socialImage + "\" width = 240>\n")
     htmlFile.write("<br/>\n")
     #htmlFile.write("</div>\n")
     #closing Html
