@@ -142,23 +142,27 @@
             android:layout_height="150dp"
             android:layout_marginTop="4dp"
             android:layout_weight="0"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_launcher_foreground"
             tools:srcCompat="@drawable/take_a_picture" />
 
+
         <ImageView
             android:id="@+id/imageViewPreview2"
-            android:layout_width="140dp"
+            android:layout_width="126dp"
             android:layout_height="150dp"
             android:layout_marginTop="4dp"
             android:layout_weight="0"
+            android:baselineAlignBottom="false"
             app:srcCompat="@drawable/ic_launcher_foreground"
             tools:srcCompat="@drawable/take_a_picture" />
 
         <ImageView
             android:id="@+id/imageViewPreview3"
-            android:layout_width="150dp"
+            android:layout_width="126dp"
             android:layout_height="150dp"
             android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_weight="0"
             app:srcCompat="@drawable/ic_launcher_foreground"
             tools:srcCompat="@drawable/take_a_picture" />
@@ -173,5 +177,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

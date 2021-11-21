@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setWaitingAnimation(View.GONE);
 
         //pictureButton = findViewById(R.id.buttonPicture);
         sendButton = findViewById(R.id.sendButton);
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
+                            setWaitingAnimation(View.VISIBLE);
                             Looper.prepare();
                             socket = new Socket(HOST, PORT);
                             OutputStream outputStream = socket.getOutputStream();
@@ -257,6 +259,8 @@ public class MainActivity extends AppCompatActivity {
                             } while (bytesRead > 0);
 
                             socket.close();
+
+                            setWaitingAnimation(View.GONE);
 
                             handler.post(new Runnable() {
                                 @Override
@@ -490,5 +494,15 @@ public class MainActivity extends AppCompatActivity {
 
         return addressText;
 
+    }
+
+    private void setWaitingAnimation(final int visibility) {
+        Handler handler = new Handler(getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.loadingPanel).setVisibility(visibility);
+            }
+        });
     }
 }
