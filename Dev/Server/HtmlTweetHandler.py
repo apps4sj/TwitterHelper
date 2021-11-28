@@ -1,5 +1,5 @@
 import tweepy
-def sendTweet(webPagePath, url):
+def sendTweet(webPagePath, url, hashTag):
    #Collecting Title
    indexHtmlFile = open(webPagePath + "/index.html", "r")
    indexHtml = indexHtmlFile.read()
@@ -46,7 +46,7 @@ def sendTweet(webPagePath, url):
        mediaIds.append(media.media_id)
 
    # Post tweet with image
-   tweet = "**" + title + "**" + url
+   tweet = "**" + title + "**" + hashTag + "**" + url
    post_result = api.update_status(status=tweet, media_ids=mediaIds)
    return str(post_result.id)
 

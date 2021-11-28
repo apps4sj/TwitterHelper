@@ -9,6 +9,10 @@ def generateHTML(theFile, theJson, htmlDir):
     if os.path.exists(homeDir):
         shutil.rmtree(homeDir)
     os.mkdir(homeDir)
+    #Create itemName.txt file
+    itemNameFile= open(homeDir + "/itemName.txt", 'w')
+    itemNameFile.write(theJson.get("itemName"))
+    itemNameFile.close()
     #Create index.html
     htmlFile = open(homeDir +"/index.html", 'w')
     htmlFile.write("<!DOCTYPE html>\n")

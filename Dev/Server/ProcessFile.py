@@ -61,7 +61,16 @@ def ProcessFile(fileName):
            updateAgeRecord(cur, theJson.get("id"), expiringTime)
            webpagePath = "/var/www/html" + "/" + id
            url = "https://apps4sj.org" + "/" + id
-           tweetId = sendTweet(webpagePath, url)
+           #Add hashtag
+           itemNameFile = open(webpagePath +"/itemName.txt", 'r')
+           itemName = itemNameFile.read()
+           itemNameFile.close()
+           print(itemName)
+           wordList = itemName.split()
+           hashTag=""
+           for word in wordList:
+               hashTag = hashTag+"#"+word.lower()
+           tweetId = sendTweet(webpagePath, url, hashTag)
            updateTweetRecord(cur, id, tweetId)
            cnx.close()
            file.close()
