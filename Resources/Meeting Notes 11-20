@@ -1,0 +1,11 @@
+Finished:
+
+1. Club webpage has been updated. Homepage is cleaner and easier to read.
+2. UI tweaks made to TwitterSeller App. App Icon, small screen phone fitting, picture orientation correction,  1 fewer button, etc. 
+3. Publish message header fix. 
+
+To Do:
+
+1. Club webpage: About page should be changed to TwitterSeller page that introduces the usage of the App. 
+2. TwitterSeller App will have  Ad delete function.
+3. Server will add hashTags to ad tweets. 

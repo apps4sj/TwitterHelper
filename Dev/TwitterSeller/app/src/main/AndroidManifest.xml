@@ -19,14 +19,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CameraInput">
-        <activity android:name="com.apps4sj.TwitterSeller.FinalActivity"></activity>
-        <activity android:name="com.apps4sj.TwitterSeller.PreviewActivity" />
+        <activity android:name=".DeleteActivity"></activity>
+        <activity android:name=".FinalActivity" />
+        <activity android:name=".PreviewActivity" />
 
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/filepath" />
 
-        <activity android:name="com.apps4sj.TwitterSeller.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,7 +46,7 @@
         </provider>
 
         <service
-            android:name="com.apps4sj.TwitterSeller.MainActivity"
+            android:name=".MainActivity"
             android:foregroundServiceType="location" />
     </application>
 

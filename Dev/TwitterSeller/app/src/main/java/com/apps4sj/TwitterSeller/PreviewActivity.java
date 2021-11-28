@@ -102,6 +102,9 @@ public class PreviewActivity extends AppCompatActivity {
         noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                MainActivity.sql.deleteListing(id);
+
                 Intent intent = new Intent(PreviewActivity.this, MainActivity.class);
                 intent.putExtra(MainActivity.SAVE_INSTANCE, saveInstance);
                 startActivity(intent);
