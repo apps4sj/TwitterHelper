@@ -53,13 +53,15 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
-
+//https://code.tutsplus.com/tutorials/android-from-scratch-how-to-store-application-data-locally--cms-26853
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final String PREVIEW_IMAGE_BYTES = "com.example.camerainput.PREVIEWBYTEARRAY";
     public static final String LISTING_ID = "com.example.camerainput.LISTINGID";
     public static final String SAVE_INSTANCE = "com.example.camerainput.SAVE_INSTANCE";
+
+    public static SQLConnection sql = null;
 
     public static final String HOST = "apps4sj.org";
     public static final int PORT = 32421;
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentPhotoNum = 0;
 
     //private Button pictureButton;
-    private Button sendButton;
+    private Button sendButton, myListingsButton;
     private EditText productInput, descInput, priceInput, emailInput, locationInput;
     private ImageView[] imageViewPreviews;
 
@@ -79,8 +81,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (sql == null) {
+            sql = new SQLConnection(this);
+        }
+
         //pictureButton = findViewById(R.id.buttonPicture);
         sendButton = findViewById(R.id.sendButton);
+        myListingsButton = findViewById(R.id.buttonMyListings);
         productInput = findViewById(R.id.productEditText);
         descInput = findViewById(R.id.editTextDescription);
         priceInput = findViewById(R.id.editTextPrice);
@@ -232,26 +239,23 @@ public class MainActivity extends AppCompatActivity {
 
                             System.out.println(toSend.toString());
 
-//                            Thread.sleep(5000);
+                            sql.addListing(new Listing(id, productInput.getText().toString(), priceInput.getText().toString(),
+                                    new SimpleDateFormat("MM-dd-yyyy").format(new Date())));
 
-//                            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                            sql.printAllListings();
+
+
                             byte[] header_buffer = new byte[10];
                             int charsIn = inputStream.read(header_buffer);
-//                            StringBuilder data = new StringBuilder(charsIn);
-//                            data.append(buffer, 0, charsIn);
                             String data = new String(header_buffer, StandardCharsets.UTF_8);
                             int filesize = Integer.parseInt(data);
                             System.out.println("File Size: " + filesize);
-
-//                            String filePath = createImageFilePath();
-//                            System.out.println(filePath);
 
                             byte[] image = new byte[filesize];
                             int bytesRead = 0;
                             int currentTotal = 0;
                             do {
                                 bytesRead = inputStream.read(image, currentTotal, (image.length-currentTotal));
-//                                System.out.println("Bytes read: " + bytesRead);
                                 if (bytesRead > 0)
                                     currentTotal += bytesRead;
                             } while (bytesRead > 0);
@@ -276,6 +280,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 thread.start();
+            }
+        });
+
+        myListingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DeleteActivity.class);
+                startActivity(intent);
             }
         });
     }
