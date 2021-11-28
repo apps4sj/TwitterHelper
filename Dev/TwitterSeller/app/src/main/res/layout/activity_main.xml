@@ -35,6 +35,18 @@
                 android:inputType="textPersonName"
                 android:text="test" />
 
+            <RelativeLayout
+                android:id="@+id/loadingPanel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </RelativeLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -128,6 +140,7 @@
                 android:hint="Enter Email"
                 android:inputType="textPersonName"
                 android:text="test" />
+
         </LinearLayout>
 
     </LinearLayout>
@@ -177,12 +190,11 @@
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginBottom="16dp"
         android:text="Send"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:backgroundTint="#00BCD4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonMyListings"
@@ -193,20 +205,8 @@
         android:layout_marginBottom="16dp"
         android:text="My listings"
         android:textSize="12sp"
-        app:backgroundTint="#040071"
+        app:backgroundTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <RelativeLayout
-        android:id="@+id/loadingPanel"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" >
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
