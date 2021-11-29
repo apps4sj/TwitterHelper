@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +23,10 @@ import java.util.List;
 public class DeleteActivity extends AppCompatActivity {
 
     private Button deleteButton, goBackButton;
-    private EditText idInput;
-    private TextView listingsTextView;
+    //private TextView listingsTextView;
+    private ListView listView;
+    private String currentID = "";
+    private String[] listingList = {""};
 
     private Socket socket;
 
@@ -32,21 +37,33 @@ public class DeleteActivity extends AppCompatActivity {
 
         goBackButton = findViewById(R.id.buttonGoBack);
         deleteButton = findViewById(R.id.buttonDelete);
-        idInput = findViewById(R.id.editTextID);
-        listingsTextView = findViewById(R.id.textViewListings);
-
+        listView = findViewById(R.id.listView);
+        deleteButton.setVisibility(View.INVISIBLE);
         updateText();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Extract ID from current listing
+                String currentListing = listingList[i];
+                int idPosition = currentListing.lastIndexOf("ID:");
+                currentID = currentListing.substring(idPosition + 3);
+                deleteButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!MainActivity.sql.idExists(idInput.getText().toString())) {
+                if (!MainActivity.sql.idExists(currentID)) {
                     Toast.makeText(DeleteActivity.this, "ID does not exist", Toast.LENGTH_SHORT).show();
+                    currentID = "";
+                    deleteButton.setVisibility(View.INVISIBLE);
                     return;
                 }
-
-                Toast.makeText(DeleteActivity.this, "Deleted " + idInput.getText().toString(), Toast.LENGTH_SHORT).show();
-                MainActivity.sql.deleteListing(idInput.getText().toString());
+                deleteButton.setVisibility(View.INVISIBLE);
+                Toast.makeText(DeleteActivity.this, "Deleted ID:" + currentID, Toast.LENGTH_SHORT).show();
+                MainActivity.sql.deleteListing(currentID);
 
                 Thread thread = new Thread(new Runnable() {
                     @Override
@@ -57,7 +74,7 @@ public class DeleteActivity extends AppCompatActivity {
 
                             JSONObject toSend = new JSONObject();
                             toSend.put("type", "delete");
-                            toSend.put("id", idInput.getText().toString());
+                            toSend.put("id", currentID);
 
                             int headerNum = 45; //toSend.toString().getBytes().length;
                             StringBuilder header = new StringBuilder(String.valueOf(headerNum));
@@ -97,12 +114,16 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
     private void updateText() {
+        listView.invalidateViews();
         List<Listing> listings = MainActivity.sql.getAllListings();
-
-        String allListings = "";
+        listingList = new String[listings.size()];
+        int i = 0;
         for (Listing l : listings) {
-            allListings += l + "\n";
+            listingList[i] = l.toString();
+            i++;
         }
-        listingsTextView.setText(allListings);
+
+        ArrayAdapter<String> adsSummaryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listingList);
+        listView.setAdapter(adsSummaryAdapter);
     }
 }

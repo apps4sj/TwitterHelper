@@ -47,6 +47,6 @@ public class Listing {
     }
 
     public String toString() {
-        return "ID:" + getId() + ", Product Name:" + getProductName() + ", Price:" + getProductPrice() + ", Date Posted:" + getDatePosted();
+        return getDatePosted() + " " + getProductName() + " for $" + getProductPrice() + "  ID:" + getId();
     }
 }
