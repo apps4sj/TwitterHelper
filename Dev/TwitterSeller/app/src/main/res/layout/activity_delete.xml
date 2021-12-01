@@ -40,6 +40,7 @@
 
     <ListView
         android:id="@+id/listView"
+        android:background="@drawable/bg_key"
         android:layout_width="390dp"
         android:layout_height="312dp"
         android:layout_marginTop="52dp"

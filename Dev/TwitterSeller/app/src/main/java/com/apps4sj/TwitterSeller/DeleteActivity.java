@@ -44,6 +44,13 @@ public class DeleteActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int defaultColor = getResources().getColor(R.color.default_color);
+                int pressedColor = getResources().getColor(R.color.pressed_color);
+                int numItem = adapterView.getCount();
+                for ( int idx=0; idx<numItem; idx++) {
+                    adapterView.getChildAt(idx).setBackgroundColor(defaultColor);
+                }
+                view.setBackgroundColor(pressedColor);
                 //Extract ID from current listing
                 String currentListing = listingList[i];
                 int idPosition = currentListing.lastIndexOf("ID:");
