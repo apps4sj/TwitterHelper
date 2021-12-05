@@ -33,19 +33,7 @@
                 android:ems="10"
                 android:hint="Enter Product Name"
                 android:inputType="textPersonName"
-                android:text="test" />
-
-            <RelativeLayout
-                android:id="@+id/loadingPanel"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ProgressBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminate="true" />
-            </RelativeLayout>
+                android:text="" />
 
         </LinearLayout>
 
@@ -69,7 +57,7 @@
                 android:ems="10"
                 android:hint="Enter Product Description"
                 android:inputType="textPersonName"
-                android:text="test" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -92,7 +80,7 @@
                 android:ems="10"
                 android:hint="Enter address (leave blank for\n automatic)"
                 android:inputType="textEmailAddress"
-                android:text="test" />
+                android:text="" />
 
         </LinearLayout>
 
@@ -116,7 +104,7 @@
                 android:ems="10"
                 android:hint="Enter Price"
                 android:inputType="textPersonName"
-                android:text="5" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -139,7 +127,7 @@
                 android:ems="10"
                 android:hint="Enter Email"
                 android:inputType="textPersonName"
-                android:text="test" />
+                android:text="" />
 
         </LinearLayout>
 
@@ -208,5 +196,17 @@
         app:backgroundTint="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
