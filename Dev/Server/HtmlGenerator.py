@@ -96,6 +96,10 @@ def generateHTML(theFile, theJson, htmlDir):
     htmlFile.write("<img src=\"" + socialImage + "\" width = 240>\n")
     htmlFile.write("<br/>\n")
     #htmlFile.write("</div>\n")
+    htmlFile.write("<a href=\"https://apps4si.org\">Promoted By Apps4Si</a>")
+    htmlFile.write("<br/>\n")
+    htmlFile.write("<a href=\"https://twitter.com/Apps4Si?ref_src=twsrc%5Etfw\" class=\"twitter-follow-button\" data-show-count=\"false\">Follow @Apps4Si</a><script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>")
+    htmlFile.write("<br/>\n")
     #closing Html
     htmlFile.write("</body>\n")
     htmlFile.write("</html>\n")

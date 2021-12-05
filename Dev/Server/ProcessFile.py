@@ -46,7 +46,7 @@ def ProcessFile(fileName):
        generateHTML(file, theJson, "/var/www/staged")
        imagePath = previewHTML(theJson, "/var/www/staged")
        currentTime = int(time.time())
-       expiringTime = currentTime + 3600
+       expiringTime = currentTime + 3600 * 24 * 4
        updateAgeRecord(cur, theJson.get("id"), expiringTime)
        cnx.close()
        file.close()
@@ -57,7 +57,7 @@ def ProcessFile(fileName):
        if res == True:
            id = theJson.get("id")
            currentTime = int(time.time())
-           expiringTime = currentTime + 3600
+           expiringTime = currentTime + 3600 * 24 * 4
            updateAgeRecord(cur, theJson.get("id"), expiringTime)
            webpagePath = "/var/www/html" + "/" + id
            url = "https://apps4sj.org" + "/" + id
@@ -69,7 +69,7 @@ def ProcessFile(fileName):
            wordList = itemName.split()
            hashTag=""
            for word in wordList:
-               hashTag = hashTag+"#"+word.lower()
+               hashTag = hashTag + "#" + word + " "
            tweetId = sendTweet(webpagePath, url, hashTag)
            updateTweetRecord(cur, id, tweetId)
            cnx.close()
@@ -95,7 +95,7 @@ def ProcessFile(fileName):
     #### This is a extend type of request #####
     if type == "extend":
        currentTime = int(time.time())
-       expiringTime = currentTime + 3600
+       expiringTime = currentTime + 3600 * 24 * 4
        updateAgeRecord(cur, theJson.get("id"), expiringTime)
        cnx.close()
        file.close()

@@ -46,7 +46,8 @@ def sendTweet(webPagePath, url, hashTag):
        mediaIds.append(media.media_id)
 
    # Post tweet with image
-   tweet = "**" + title + "**" + hashTag + "**" + url
+   tweet = "**" + title + "**" + hashTag + "**" + url + "\n"
+   tweet = tweet + "Listed by " + "http://apps4si.org" + " #SocialImpact" + " #SocialJustice" + " #App"
    post_result = api.update_status(status=tweet, media_ids=mediaIds)
    return str(post_result.id)
 
