@@ -3,6 +3,7 @@ package com.apps4sj.TwitterSeller;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
@@ -28,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -72,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     //private Button pictureButton;
     private Button sendButton, myListingsButton;
-    private EditText productInput, descInput, priceInput, emailInput, locationInput;
+    private EditText productInput, descInput, priceInput, emailInput, phoneNumInput, locationInput;
     private ImageView[] imageViewPreviews;
-
+    private final int REQUEST_CODE_READ_PHONE_NUMBER = 0;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,30 +95,48 @@ public class MainActivity extends AppCompatActivity {
         descInput = findViewById(R.id.editTextDescription);
         priceInput = findViewById(R.id.editTextPrice);
         emailInput = findViewById(R.id.editTextEmail);
+        phoneNumInput = findViewById(R.id.editTextPhoneNum);
         locationInput = findViewById(R.id.locationEditText);
         imageViewPreviews = new ImageView[]{findViewById(R.id.imageViewPreview1), findViewById(R.id.imageViewPreview2), findViewById(R.id.imageViewPreview3)};
 
         Intent intent = getIntent();
 
         String jsonSave = intent.getStringExtra(MainActivity.SAVE_INSTANCE);
+        if (jsonSave == null && ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_PHONE_NUMBERS) !=
+                PackageManager.PERMISSION_GRANTED) {
+            // You can directly ask for the permission.
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            requestPermissions(new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_CODE_READ_PHONE_NUMBER);
+        }
+
         if (jsonSave != null && !jsonSave.equals("")) {
-           setSaveInstance(jsonSave);
+            setSaveInstance(jsonSave);
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.READ_PHONE_NUMBERS) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                TelephonyManager tMgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+                String phoneNumber = tMgr.getLine1Number();
+                phoneNumInput.setText(phoneNumber);
+            }
         }
         Resources res = getResources();
         Drawable drawable = res.getDrawable(R.drawable.take_a_picture);
 
-        for (ImageView  imageView : imageViewPreviews ) {
+        for (ImageView imageView : imageViewPreviews) {
             imageView.setImageDrawable(drawable);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(v == imageViewPreviews[0]) {
+                    if (v == imageViewPreviews[0]) {
                         currentPhotoNum = 0;
                     }
-                    if(v == imageViewPreviews[1]) {
+                    if (v == imageViewPreviews[1]) {
                         currentPhotoNum = 1;
                     }
-                    if(v == imageViewPreviews[2]) {
+                    if (v == imageViewPreviews[2]) {
                         currentPhotoNum = 2;
                     }
 
@@ -198,7 +218,10 @@ public class MainActivity extends AppCompatActivity {
                                 location = findLocation(MainActivity.this);
                             }
                             toSend.put("location", location);
-                            toSend.put("contact", emailInput.getText());
+                            JSONObject contact = new JSONObject();
+                            contact.put("email", emailInput.getText());
+                            contact.put("phoneNum", phoneNumInput.getText());
+                            toSend.put("contact", contact);
                             if (binaryImage1.length > 0) {
                                 JSONObject image0 = new JSONObject();
                                 image0.put("fileName", "image0.jpg");
@@ -257,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                             int bytesRead = 0;
                             int currentTotal = 0;
                             do {
-                                bytesRead = inputStream.read(image, currentTotal, (image.length-currentTotal));
+                                bytesRead = inputStream.read(image, currentTotal, (image.length - currentTotal));
                                 if (bytesRead > 0)
                                     currentTotal += bytesRead;
                             } while (bytesRead > 0);
@@ -277,8 +300,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -303,7 +325,10 @@ public class MainActivity extends AppCompatActivity {
             saveInstance.put("price", String.valueOf(priceInput.getText()));
             saveInstance.put("description", descInput.getText());
             saveInstance.put("location", locationInput.getText());
-            saveInstance.put("contact", emailInput.getText());
+            JSONObject contact = new JSONObject();
+            contact.put("email", emailInput.getText());
+            contact.put("phoneNum", phoneNumInput.getText());
+            saveInstance.put("contact", contact);
             if (!currentPhotoPaths[0].equals("")) {
                 saveInstance.put("image0", currentPhotoPaths[0]);
             }
@@ -314,19 +339,21 @@ public class MainActivity extends AppCompatActivity {
                 saveInstance.put("image2", currentPhotoPaths[2]);
             }
             return saveInstance.toString();
-        } catch (Exception e){
+        } catch (Exception e) {
             return "";
         }
     }
 
-    private void setSaveInstance (String savedInstance) {
+    private void setSaveInstance(String savedInstance) {
         try {
             JSONObject json = new JSONObject(savedInstance);
             productInput.setText(json.get("itemName").toString());
             priceInput.setText(json.get("price").toString());
             descInput.setText(json.get("description").toString());
             locationInput.setText(json.get("location").toString());
-            emailInput.setText(json.get("contact").toString());
+            JSONObject contact = (JSONObject) json.get("contact");
+            emailInput.setText(contact.get("email").toString());
+            phoneNumInput.setText(contact.get("phoneNum").toString());
             if (!json.isNull("image0")) {
                 Bitmap imageBitmap = rotateBitmap(json.get("image0").toString());
                 imageViewPreviews[0].setImageBitmap(imageBitmap);
@@ -370,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
 
-        switch(orientation) {
+        switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_90:
                 return rotateImage(bitmap, 90);
             case ExifInterface.ORIENTATION_ROTATE_180:
