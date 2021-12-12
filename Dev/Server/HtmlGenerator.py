@@ -2,6 +2,7 @@ import os
 import os.path
 import shutil
 import random
+import json
 def generateHTML(theFile, theJson, htmlDir):
 #defining the function of generateHTML later used in main.py
     id = theJson.get("id")
@@ -61,7 +62,16 @@ def generateHTML(theFile, theJson, htmlDir):
     htmlFile.write("<h3/>\n")
     #htmlFile.write("<br/>\n")
     htmlFile.write("<p>")
-    htmlFile.write(theJson.get("contact"))
+    contactString = theJson.get("contact")
+    if type(contactString) != str:
+        #input is a json object
+        contactJson = contactString
+        htmlFile.write(contactJson.get("email"))
+        htmlFile.write(" ")
+        htmlFile.write(contactJson.get("phoneNum"))
+        htmlFile.write("<br/>\n")
+    else:
+        htmlFile.write(theJson.get("contact"))
     htmlFile.write("</p>")
     htmlFile.write("<br/>\n")
     htmlFile.write("</div>\n")
