@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREVIEW_IMAGE_BYTES = "com.example.camerainput.PREVIEWBYTEARRAY";
     public static final String LISTING_ID = "com.example.camerainput.LISTINGID";
     public static final String SAVE_INSTANCE = "com.example.camerainput.SAVE_INSTANCE";
+    public static final String EDITING = "com.example.camerainput.EDITING";
 
     public static SQLConnection sql = null;
 
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText productInput, descInput, priceInput, emailInput, phoneNumInput, locationInput;
     private ImageView[] imageViewPreviews;
     private final int REQUEST_CODE_READ_PHONE_NUMBER = 0;
+
+    private boolean editing;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (sql == null) {
             sql = new SQLConnection(this);
+//            sql.createTable();
+            sql.printAllListings();
+//            sql.dropTable();
         }
 
         //pictureButton = findViewById(R.id.buttonPicture);
@@ -97,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.editTextEmail);
         phoneNumInput = findViewById(R.id.editTextPhoneNum);
         locationInput = findViewById(R.id.locationEditText);
+        phoneNumInput = findViewById(R.id.editTextPhoneNum);
         imageViewPreviews = new ImageView[]{findViewById(R.id.imageViewPreview1), findViewById(R.id.imageViewPreview2), findViewById(R.id.imageViewPreview3)};
 
         Intent intent = getIntent();
@@ -113,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (jsonSave != null && !jsonSave.equals("")) {
             setSaveInstance(jsonSave);
+            System.out.println("setting save");
         } else {
             if (ContextCompat.checkSelfPermission(
                     this, Manifest.permission.READ_PHONE_NUMBERS) ==
@@ -122,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 phoneNumInput.setText(phoneNumber);
             }
         }
+
+        editing = intent.getBooleanExtra(MainActivity.EDITING, false);
+
         Resources res = getResources();
         Drawable drawable = res.getDrawable(R.drawable.take_a_picture);
 
@@ -207,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
 
                             JSONObject toSend = new JSONObject();
 
-                            toSend.put("type", "stage");
+                            if (editing) toSend.put("type", "edit");
+                            else toSend.put("type", "stage");
                             String id = String.valueOf((int) (Math.random() * 999999999));
                             toSend.put("id", id);
                             toSend.put("itemName", productInput.getText());
@@ -218,10 +231,12 @@ public class MainActivity extends AppCompatActivity {
                                 location = findLocation(MainActivity.this);
                             }
                             toSend.put("location", location);
+
                             JSONObject contact = new JSONObject();
                             contact.put("email", emailInput.getText());
                             contact.put("phoneNum", phoneNumInput.getText());
                             toSend.put("contact", contact);
+
                             if (binaryImage1.length > 0) {
                                 JSONObject image0 = new JSONObject();
                                 image0.put("fileName", "image0.jpg");
@@ -264,7 +279,11 @@ public class MainActivity extends AppCompatActivity {
 
                             System.out.println(toSend.toString());
 
-                            sql.addListing(new Listing(id, productInput.getText().toString(), priceInput.getText().toString(),
+                            sql.addListing(new Listing(id, productInput.getText().toString(),
+                                    descInput.getText().toString(), emailInput.getText().toString(),
+                                    locationInput.getText().toString(), phoneNumInput.getText().toString(),
+                                    priceInput.getText().toString(), currentPhotoPaths[0],
+                                    currentPhotoPaths[1], currentPhotoPaths[2],
                                     new SimpleDateFormat("MM-dd-yyyy").format(new Date())));
 
                             sql.printAllListings();
@@ -325,10 +344,12 @@ public class MainActivity extends AppCompatActivity {
             saveInstance.put("price", String.valueOf(priceInput.getText()));
             saveInstance.put("description", descInput.getText());
             saveInstance.put("location", locationInput.getText());
+
             JSONObject contact = new JSONObject();
             contact.put("email", emailInput.getText());
             contact.put("phoneNum", phoneNumInput.getText());
             saveInstance.put("contact", contact);
+
             if (!currentPhotoPaths[0].equals("")) {
                 saveInstance.put("image0", currentPhotoPaths[0]);
             }
@@ -346,14 +367,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setSaveInstance(String savedInstance) {
         try {
+            System.out.println(savedInstance);
             JSONObject json = new JSONObject(savedInstance);
             productInput.setText(json.get("itemName").toString());
             priceInput.setText(json.get("price").toString());
             descInput.setText(json.get("description").toString());
             locationInput.setText(json.get("location").toString());
+
             JSONObject contact = (JSONObject) json.get("contact");
             emailInput.setText(contact.get("email").toString());
             phoneNumInput.setText(contact.get("phoneNum").toString());
+
             if (!json.isNull("image0")) {
                 Bitmap imageBitmap = rotateBitmap(json.get("image0").toString());
                 imageViewPreviews[0].setImageBitmap(imageBitmap);

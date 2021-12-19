@@ -22,7 +22,7 @@ import java.util.List;
 
 public class DeleteActivity extends AppCompatActivity {
 
-    private Button deleteButton, goBackButton;
+    private Button deleteButton, goBackButton, editButton;
     //private TextView listingsTextView;
     private ListView listView;
     private String currentID = "";
@@ -37,8 +37,10 @@ public class DeleteActivity extends AppCompatActivity {
 
         goBackButton = findViewById(R.id.buttonGoBack);
         deleteButton = findViewById(R.id.buttonDelete);
+        editButton = findViewById(R.id.buttonEdit);
         listView = findViewById(R.id.listView);
         deleteButton.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
         updateText();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -48,6 +50,7 @@ public class DeleteActivity extends AppCompatActivity {
                 int pressedColor = getResources().getColor(R.color.pressed_color);
                 int numItem = adapterView.getCount();
                 for ( int idx=0; idx<numItem; idx++) {
+                    System.out.println(idx);
                     adapterView.getChildAt(idx).setBackgroundColor(defaultColor);
                 }
                 view.setBackgroundColor(pressedColor);
@@ -56,6 +59,7 @@ public class DeleteActivity extends AppCompatActivity {
                 int idPosition = currentListing.lastIndexOf("ID:");
                 currentID = currentListing.substring(idPosition + 3);
                 deleteButton.setVisibility(View.VISIBLE);
+                editButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -69,6 +73,7 @@ public class DeleteActivity extends AppCompatActivity {
                     return;
                 }
                 deleteButton.setVisibility(View.INVISIBLE);
+                editButton.setVisibility(View.INVISIBLE);
                 Toast.makeText(DeleteActivity.this, "Deleted ID:" + currentID, Toast.LENGTH_SHORT).show();
                 MainActivity.sql.deleteListing(currentID);
 
@@ -108,6 +113,26 @@ public class DeleteActivity extends AppCompatActivity {
                 thread.start();
 
                 updateText();
+            }
+        });
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    deleteButton.setVisibility(View.INVISIBLE);
+                    editButton.setVisibility(View.INVISIBLE);
+
+                    Intent intent = new Intent(DeleteActivity.this, MainActivity.class);
+                    intent.putExtra(MainActivity.SAVE_INSTANCE, MainActivity.sql.getListingJSON(Integer.parseInt(currentID)));
+                    intent.putExtra(MainActivity.EDITING, true);
+                    startActivity(intent);
+
+                    // either make boolean in intent for edit/new listing or just delete listing here
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
