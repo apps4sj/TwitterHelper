@@ -218,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             JSONObject toSend = new JSONObject();
-
-                            if (editing) toSend.put("type", "edit");
-                            else toSend.put("type", "stage");
+                            //For now, treat each edition as a new listing. The user can delete old listing
+                            // in mylistings page.
+                            toSend.put("type", "stage");
                             String id = String.valueOf((int) (Math.random() * 999999999));
                             toSend.put("id", id);
                             toSend.put("itemName", productInput.getText());
@@ -379,20 +379,41 @@ public class MainActivity extends AppCompatActivity {
             phoneNumInput.setText(contact.get("phoneNum").toString());
 
             if (!json.isNull("image0")) {
-                Bitmap imageBitmap = rotateBitmap(json.get("image0").toString());
-                imageViewPreviews[0].setImageBitmap(imageBitmap);
+                final Bitmap imageBitmap = rotateBitmap(json.get("image0").toString());
+                //Delay setting preview by .2s
+                Handler handler = new Handler(getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageViewPreviews[0].setImageBitmap(imageBitmap);
+                    }
+                }, 200);
                 currentPhotoPaths[0] = json.get("image0").toString();
                 currentPhotoNum = 1;
             }
             if (!json.isNull("image1")) {
-                Bitmap imageBitmap = rotateBitmap(json.get("image1").toString());
-                imageViewPreviews[1].setImageBitmap(imageBitmap);
+                final Bitmap imageBitmap = rotateBitmap(json.get("image1").toString());
+                //Delay setting preview by .2s
+                Handler handler = new Handler(getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageViewPreviews[1].setImageBitmap(imageBitmap);
+                    }
+                }, 200);
                 currentPhotoPaths[1] = json.get("image1").toString();
                 currentPhotoNum = 2;
             }
             if (!json.isNull("image2")) {
-                Bitmap imageBitmap = rotateBitmap(json.get("image2").toString());
-                imageViewPreviews[2].setImageBitmap(imageBitmap);
+                final Bitmap imageBitmap = rotateBitmap(json.get("image2").toString());
+                //Delay setting preview by .2s
+                Handler handler = new Handler(getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageViewPreviews[2].setImageBitmap(imageBitmap);
+                    }
+                }, 200);
                 currentPhotoPaths[2] = json.get("image2").toString();
                 currentPhotoNum = 3;
             }
