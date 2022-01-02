@@ -81,6 +81,53 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean editing;
 
+    //Location related
+    //https://stackoverflow.com/questions/1513485/how-do-i-get-the-current-gps-location-programmatically-in-android
+    private LocationManager locationManager = null;
+    private MyLocationListener locationListener = null;
+
+    /*---------- Listener class to get coordinates ------------- */
+    private class MyLocationListener implements LocationListener {
+        private MainActivity hostActivity = null;
+
+        @Override
+        public void onLocationChanged(Location loc) {
+            /*------- To get address from coordinates -------- */
+            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+            List<Address> addresses;
+            try {
+                addresses = gcd.getFromLocation(loc.getLatitude(),
+                        loc.getLongitude(), 1);
+                if (addresses.size() > 0) {
+                    String curAddress = addresses.get(0).getAddressLine(0);
+                    if (hostActivity != null) {
+                        hostActivity.setAddress(curAddress);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        //The listener needs to know where to show the address
+        public void setHostActivity(MainActivity theHostActivity) {
+            hostActivity = theHostActivity;
+        }
+    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,13 +157,35 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         String jsonSave = intent.getStringExtra(MainActivity.SAVE_INSTANCE);
-        if (jsonSave == null && ContextCompat.checkSelfPermission(
+
+        //Check and ask for permissions
+        ArrayList<String> permissions = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(
                 this, Manifest.permission.READ_PHONE_NUMBERS) !=
                 PackageManager.PERMISSION_GRANTED) {
-            // You can directly ask for the permission.
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
-            requestPermissions(new String[]{Manifest.permission.READ_PHONE_NUMBERS}, REQUEST_CODE_READ_PHONE_NUMBER);
+            permissions.add(Manifest.permission.READ_PHONE_NUMBERS);
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        if (jsonSave == null && permissions.size() > 0) {
+            String[] permissionStrings = (String[])permissions.toArray(new String[0]);
+            requestPermissions(permissionStrings, REQUEST_CODE_READ_PHONE_NUMBER);
+        }
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new MyLocationListener();
+        locationListener.setHostActivity(this);
+
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 5000, 10, (LocationListener) locationListener);
         }
 
         if (jsonSave != null && !jsonSave.equals("")) {
@@ -227,9 +296,6 @@ public class MainActivity extends AppCompatActivity {
                             toSend.put("price", String.valueOf(priceInput.getText()));
                             toSend.put("description", descInput.getText());
                             String location = locationInput.getText().toString();
-                            if (location.equals("")) {
-                                location = findLocation(MainActivity.this);
-                            }
                             toSend.put("location", location);
 
                             JSONObject contact = new JSONObject();
@@ -588,5 +654,10 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.loadingPanel).setVisibility(visibility);
             }
         });
+    }
+
+    //Called by location listener to fill in the address
+    public void setAddress(String addressLine) {
+        locationInput.setText(addressLine);
     }
 }
