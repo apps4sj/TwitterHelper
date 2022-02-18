@@ -20,6 +20,14 @@ class PreviewViewController: UIViewController {
     @IBOutlet var cancelButton: UIButton!
 
     @IBAction func publishButtonClicked() {
+        //Need to check if network connection is available.
+        if !NetworkMonitor.shared.isConnected {
+            let alert = UIAlertController(title: "No Internet Connection!", message: "Please check your network connection!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+
         let toSend: NSMutableDictionary = NSMutableDictionary()
 
         toSend.setValue("publish", forKey: "type")
@@ -84,7 +92,6 @@ class PreviewViewController: UIViewController {
         var writeLength = outputStream.write(encodedDataArray, maxLength: encodedDataArray.count)
         encodedDataArray = [UInt8](jsonString.utf8)
         writeLength += outputStream.write(encodedDataArray, maxLength: encodedDataArray.count)
-        print("I am here 0", writeLength)
         inputStream.close()
         outputStream.close()
     }

@@ -8,6 +8,32 @@
 import UIKit
 import SQLite3
 
+import Foundation
+import Network
+
+//A singleton network monitor
+final class NetworkMonitor {
+    static let shared = NetworkMonitor()
+    private let queue = DispatchQueue.global()
+    private let monitor: NWPathMonitor
+    public private(set) var isConnected: Bool = false
+    
+    private init() {
+        monitor = NWPathMonitor()
+    }
+    
+    public func startMonitoring() {
+        monitor.start(queue: queue)
+        monitor.pathUpdateHandler = { [weak self] path in
+            self?.isConnected = (path.status == .satisfied)
+        }
+    }
+    
+    public func stopMonitoring() {
+        monitor.cancel()
+    }
+}
+
 class MainViewController: UIViewController {
     @IBOutlet var productInput:UITextField!
     @IBOutlet var descInput:UITextField!
@@ -65,6 +91,14 @@ class MainViewController: UIViewController {
     
     /// When the Send button is clicked
     @IBAction func sendButtonClicked() {
+        //Need to check if network connection is available.
+        if !NetworkMonitor.shared.isConnected {
+            let alert = UIAlertController(title: "No Internet Connection!", message: "Please check your network connection!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
         let toSend: NSMutableDictionary = NSMutableDictionary()
         
         toSend.setValue("stage", forKey: "type")
@@ -261,7 +295,7 @@ class MainViewController: UIViewController {
         }
         
         var read = inputStream.read(buffer, maxLength: 10)
-        for idx in 0...5 {
+        for _ in 0...15 {
             if  read <= 0 {
                 Thread.sleep(forTimeInterval: 0.3)
                 read = inputStream.read(buffer, maxLength: 10)
@@ -272,8 +306,16 @@ class MainViewController: UIViewController {
         var totalRead = 0
         while ( read > 0 ) {
             read = inputStream.read(buffer + totalRead, maxLength: 1024)
+            for _ in 0...15 {
+                if  read <= 0 {
+                    print("failed to read!!!!!")
+                    Thread.sleep(forTimeInterval: 0.3)
+                    read = inputStream.read(buffer, maxLength: 1024)
+                } else {
+                    break
+                }
+            }
             totalRead += read
-            print("I am here read bytes", read)
         }
         bufferPointer = UnsafeMutableBufferPointer(start: buffer, count: totalRead)
         inputStream.close()
@@ -311,8 +353,8 @@ class MainViewController: UIViewController {
             }
             
             let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .medium
+            dateFormatter.dateStyle = .short
+            dateFormatter.timeStyle = .short
             dateFormatter.locale = Locale(identifier: "en_US")
             let date = Date(timeIntervalSinceReferenceDate: 118800)
             let postDate = dateFormatter.string(from: date)
@@ -461,7 +503,7 @@ extension MainViewController: UIImagePickerControllerDelegate,
                 UIImage else {
             return
         }
-        let imageJpegData = image.jpegData(compressionQuality: 0.90)
+        let imageJpegData = image.jpegData(compressionQuality: 0.70)
         let n = Int.random(in: 100000000...999999999)
         let imageFileName = String(n) + ".jpg"
         let fileUrl = try!

@@ -43,6 +43,14 @@ class DeleteViewController: UIViewController {
     }
     
     @IBAction func deleteButtonClicked() {
+        //Need to check if network connection is available.
+        if !NetworkMonitor.shared.isConnected {
+            let alert = UIAlertController(title: "No Internet Connection!", message: "Please check your network connection!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+
         if curActiveListingId.count > 1  {
             deleteListing( id:curActiveListingId)
         }
@@ -127,7 +135,6 @@ class DeleteViewController: UIViewController {
         var writeLength = outputStream.write(encodedDataArray, maxLength: encodedDataArray.count)
         encodedDataArray = [UInt8](jsonString.utf8)
         writeLength += outputStream.write(encodedDataArray, maxLength: encodedDataArray.count)
-        print("I am here 0", writeLength)
         inputStream.close()
         outputStream.close()
     }
