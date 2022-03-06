@@ -84,8 +84,8 @@ class PreviewViewController: UIViewController {
                                              32421,
                                              &readStream,
                                              &writeStream)
-        var inputStream: InputStream! = readStream!.takeRetainedValue()
-        var outputStream: OutputStream! = writeStream!.takeRetainedValue()
+        let inputStream: InputStream! = readStream!.takeRetainedValue()
+        let outputStream: OutputStream! = writeStream!.takeRetainedValue()
         inputStream.open()
         outputStream.open()
         var encodedDataArray = [UInt8](header.utf8)

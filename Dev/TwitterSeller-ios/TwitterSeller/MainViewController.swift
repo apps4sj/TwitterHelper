@@ -303,14 +303,15 @@ class MainViewController: UIViewController {
                 break
             }
         }
+        print("Head is read successfully")
         var totalRead = 0
         while ( read > 0 ) {
-            read = inputStream.read(buffer + totalRead, maxLength: 1024)
+            read = inputStream.read(buffer + totalRead, maxLength: 4096)
             for _ in 0...15 {
                 if  read <= 0 {
-                    print("failed to read!!!!!")
+                    print("failed to read!!!!!", totalRead)
                     Thread.sleep(forTimeInterval: 0.3)
-                    read = inputStream.read(buffer, maxLength: 1024)
+                    read = inputStream.read(buffer, maxLength: 4096)
                 } else {
                     break
                 }
@@ -356,8 +357,9 @@ class MainViewController: UIViewController {
             dateFormatter.dateStyle = .short
             dateFormatter.timeStyle = .short
             dateFormatter.locale = Locale(identifier: "en_US")
-            let date = Date(timeIntervalSinceReferenceDate: 118800)
+            let date = Date()
             let postDate = dateFormatter.string(from: date)
+            print(postDate)
             //let postDate = "This_is_wrong"
             print(id)
             print(query)
@@ -503,7 +505,8 @@ extension MainViewController: UIImagePickerControllerDelegate,
                 UIImage else {
             return
         }
-        let imageJpegData = image.jpegData(compressionQuality: 0.70)
+        let targetSize = CGSize(width: 400, height: 400)
+        let imageJpegData = image.scalePreservingAspectRatio(targetSize: targetSize).jpegData(compressionQuality: 0.70)
         let n = Int.random(in: 100000000...999999999)
         let imageFileName = String(n) + ".jpg"
         let fileUrl = try!
@@ -579,5 +582,40 @@ extension OutputStream {
             }
             return dataPointer.count
         }
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////
+/// Extend UIImage for lower resolution picture
+/////////////////////////////////////////////////////////////////
+/// Solution copied from https://www.advancedswift.com/resize-uiimage-no-stretching-swift/
+extension UIImage {
+    func scalePreservingAspectRatio(targetSize: CGSize) -> UIImage {
+        // Determine the scale factor that preserves aspect ratio
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        let scaleFactor = min(widthRatio, heightRatio)
+        
+        // Compute the new image size that preserves aspect ratio
+        let scaledImageSize = CGSize(
+            width: size.width * scaleFactor,
+            height: size.height * scaleFactor
+        )
+
+        // Draw and return the resized UIImage
+        let renderer = UIGraphicsImageRenderer(
+            size: scaledImageSize
+        )
+
+        let scaledImage = renderer.image { _ in
+            self.draw(in: CGRect(
+                origin: .zero,
+                size: scaledImageSize
+            ))
+        }
+        
+        return scaledImage
     }
 }
