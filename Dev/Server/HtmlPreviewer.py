@@ -6,7 +6,7 @@ def previewHTML(theJson, htmlDir):
     url = "file://"+homeDir + "/index.html"
     imagePath = htmlDir + "/" + id + ".jpg"
     options = {
-        'quality': 80
+        'quality': 50
     }
     imgkit.from_url(url, imagePath, options)
     return imagePath

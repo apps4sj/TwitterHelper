@@ -62,7 +62,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                imageData = imageFile.read()
                imageFile.close()
                self.request.sendall(imageData)
-               time.sleep(.4)
+               time.sleep(4)
                os.remove(response)
             if response == "extended":
                 self.request.sendall(bytes("extended",'ascii'))
