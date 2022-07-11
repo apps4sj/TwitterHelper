@@ -83,49 +83,49 @@ public class MainActivity extends AppCompatActivity {
 
     //Location related
     //https://stackoverflow.com/questions/1513485/how-do-i-get-the-current-gps-location-programmatically-in-android
-    private LocationManager locationManager = null;
-    private MyLocationListener locationListener = null;
+//    private LocationManager locationManager = null;
+//    private MyLocationListener locationListener = null;
 
-    /*---------- Listener class to get coordinates ------------- */
-    private class MyLocationListener implements LocationListener {
-        private MainActivity hostActivity = null;
-
-        @Override
-        public void onLocationChanged(Location loc) {
-            /*------- To get address from coordinates -------- */
-            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-            List<Address> addresses;
-            try {
-                addresses = gcd.getFromLocation(loc.getLatitude(),
-                        loc.getLongitude(), 1);
-                if (addresses.size() > 0) {
-                    String curAddress = addresses.get(0).getAddressLine(0);
-                    if (hostActivity != null) {
-                        hostActivity.setAddress(curAddress);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        //The listener needs to know where to show the address
-        public void setHostActivity(MainActivity theHostActivity) {
-            hostActivity = theHostActivity;
-        }
-    }
+//    /*---------- Listener class to get coordinates ------------- */
+//    private class MyLocationListener implements LocationListener {
+//        private MainActivity hostActivity = null;
+//
+//        @Override
+//        public void onLocationChanged(Location loc) {
+//            /*------- To get address from coordinates -------- */
+//            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+//            List<Address> addresses;
+//            try {
+//                addresses = gcd.getFromLocation(loc.getLatitude(),
+//                        loc.getLongitude(), 1);
+//                if (addresses.size() > 0) {
+//                    String curAddress = addresses.get(0).getAddressLine(0);
+//                    if (hostActivity != null) {
+//                        hostActivity.setAddress(curAddress);
+//                    }
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//        }
+//
+//        //The listener needs to know where to show the address
+//        public void setHostActivity(MainActivity theHostActivity) {
+//            hostActivity = theHostActivity;
+//        }
+//    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         if (sql == null) {
             sql = new SQLConnection(this);
 //            sql.createTable();
-            sql.printAllListings();
+//            sql.printAllListings();
 //            sql.dropTable();
         }
 
@@ -177,16 +177,16 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(permissionStrings, REQUEST_CODE_READ_PHONE_NUMBER);
         }
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener();
-        locationListener.setHostActivity(this);
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        locationListener = new MyLocationListener();
+//        locationListener.setHostActivity(this);
 
-        if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, 5000, 10, (LocationListener) locationListener);
-        }
+//        if (ContextCompat.checkSelfPermission(
+//                this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+//                PackageManager.PERMISSION_GRANTED) {
+//            locationManager.requestLocationUpdates(
+//                    LocationManager.NETWORK_PROVIDER, 5000, 10, (LocationListener) locationListener);
+//        }
 
         if (jsonSave != null && !jsonSave.equals("")) {
             setSaveInstance(jsonSave);
@@ -547,104 +547,104 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public String findLocation(Context con) {
-        LocationManager locationManager = (LocationManager) con.getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = locationManager.getProviders(true);
-        for (String provider : providers) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return "No location";
-            }
-            locationManager.requestLocationUpdates(provider, 1000, 0,
-                    new LocationListener() {
+//    public String findLocation(Context con) {
+//        LocationManager locationManager = (LocationManager) con.getSystemService(Context.LOCATION_SERVICE);
+//        List<String> providers = locationManager.getProviders(true);
+//        for (String provider : providers) {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    ActivityCompat#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for ActivityCompat#requestPermissions for more details.
+//                return "No location";
+//            }
+//            locationManager.requestLocationUpdates(provider, 1000, 0,
+//                    new LocationListener() {
+//
+//                        public void onLocationChanged(Location location) {
+//                        }
+//
+//                        public void onProviderDisabled(String provider) {
+//                        }
+//
+//                        public void onProviderEnabled(String provider) {
+//                        }
+//
+//                        public void onStatusChanged(String provider, int status,
+//                                                    Bundle extras) {
+//                        }
+//                    });
+//            Location location = locationManager.getLastKnownLocation(provider);
+//            if (location != null) {
+//                double latitude = location.getLatitude();
+//                double longitude = location.getLongitude();
+//                return convertLocationToAddress(location); //new String[]{String.valueOf(latitude), String.valueOf(longitude)};
+//            }
+//        }
+//        return "No location";
+//    }
 
-                        public void onLocationChanged(Location location) {
-                        }
-
-                        public void onProviderDisabled(String provider) {
-                        }
-
-                        public void onProviderEnabled(String provider) {
-                        }
-
-                        public void onStatusChanged(String provider, int status,
-                                                    Bundle extras) {
-                        }
-                    });
-            Location location = locationManager.getLastKnownLocation(provider);
-            if (location != null) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                return convertLocationToAddress(location); //new String[]{String.valueOf(latitude), String.valueOf(longitude)};
-            }
-        }
-        return "No location";
-    }
-
-    // https://stackoverflow.com/questions/12102570/how-to-convert-gps-coordinates-to-locality
-    private String convertLocationToAddress(Location location) {
-        String addressText;
-        String errorMessage = "";
-
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        List<Address> addresses = null;
-
-        try {
-            addresses = geocoder.getFromLocation(
-                    location.getLatitude(),
-                    location.getLongitude(),
-                    1
-            );
-        } catch (IOException ioException) {
-            // Network or other I/O issues
-            errorMessage = "NO INTERNET";
-            System.out.println(errorMessage);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            // Invalid long / lat
-            errorMessage = "INVALID COORDS";
-            System.out.println(errorMessage + ". " +
-                    "Latitude = " + location.getLatitude() +
-                    ", Longitude = " +
-                    location.getLongitude());
-        }
-
-        // No address was found
-        if (addresses == null || addresses.size() == 0) {
-            if (errorMessage.isEmpty()) {
-                errorMessage = "NO ADDRESS FOUND";
-            }
-            addressText = String.valueOf(location.getLatitude()) + location.getLongitude();
-
-        } else {
-            Address address = addresses.get(0);
-            ArrayList<String> addressFragments = new ArrayList<>();
-
-            // Fetch the address lines, join them, and return to thread
-            // Only includes city and state
-            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
-            }
-
-            System.out.println(addressFragments.toString());
-            addressFragments = new ArrayList<String>(Arrays.asList(addressFragments.get(0).split(", ")));
-            addressFragments.remove(0);
-            System.out.println(addressFragments.toString());
-
-            addressText =
-                    TextUtils.join(System.getProperty("line.separator"),
-                            addressFragments);
-        }
-
-        return addressText;
-
-    }
+//    // https://stackoverflow.com/questions/12102570/how-to-convert-gps-coordinates-to-locality
+//    private String convertLocationToAddress(Location location) {
+//        String addressText;
+//        String errorMessage = "";
+//
+//        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+//
+//        List<Address> addresses = null;
+//
+//        try {
+//            addresses = geocoder.getFromLocation(
+//                    location.getLatitude(),
+//                    location.getLongitude(),
+//                    1
+//            );
+//        } catch (IOException ioException) {
+//            // Network or other I/O issues
+//            errorMessage = "NO INTERNET";
+//            System.out.println(errorMessage);
+//        } catch (IllegalArgumentException illegalArgumentException) {
+//            // Invalid long / lat
+//            errorMessage = "INVALID COORDS";
+//            System.out.println(errorMessage + ". " +
+//                    "Latitude = " + location.getLatitude() +
+//                    ", Longitude = " +
+//                    location.getLongitude());
+//        }
+//
+//        // No address was found
+//        if (addresses == null || addresses.size() == 0) {
+//            if (errorMessage.isEmpty()) {
+//                errorMessage = "NO ADDRESS FOUND";
+//            }
+//            addressText = String.valueOf(location.getLatitude()) + location.getLongitude();
+//
+//        } else {
+//            Address address = addresses.get(0);
+//            ArrayList<String> addressFragments = new ArrayList<>();
+//
+//            // Fetch the address lines, join them, and return to thread
+//            // Only includes city and state
+//            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+//                addressFragments.add(address.getAddressLine(i));
+//            }
+//
+//            System.out.println(addressFragments.toString());
+//            addressFragments = new ArrayList<String>(Arrays.asList(addressFragments.get(0).split(", ")));
+//            addressFragments.remove(0);
+//            System.out.println(addressFragments.toString());
+//
+//            addressText =
+//                    TextUtils.join(System.getProperty("line.separator"),
+//                            addressFragments);
+//        }
+//
+//        return addressText;
+//
+//    }
 
     private void setWaitingAnimation(final int visibility) {
         Handler handler = new Handler(getMainLooper());
@@ -657,7 +657,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Called by location listener to fill in the address
-    public void setAddress(String addressLine) {
-        locationInput.setText(addressLine);
-    }
+//    public void setAddress(String addressLine) {
+//        locationInput.setText(addressLine);
+//    }
 }
