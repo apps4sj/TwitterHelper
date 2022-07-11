@@ -78,7 +78,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Enter address (leave blank for\n automatic)"
+                android:hint="Enter location"
                 android:inputType="textEmailAddress"
                 android:text="" />
 
